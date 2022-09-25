@@ -27,7 +27,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-<<<<<<< HEAD
 
 
 	implementation "io.springfox:springfox-boot-starter:3.0.0"
@@ -42,9 +41,6 @@ dependencies {
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-
-=======
->>>>>>> 02dacdc (Revert "Feature: community 파일 생성")
 }
 
 tasks.named('test') {
