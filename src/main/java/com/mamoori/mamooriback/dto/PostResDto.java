@@ -6,5 +6,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PostResDto {
-    String test;
+    private String title;
+    private String content;
+    private String receiver;
+    private String createAt;
+    private String updateAt;
 }
