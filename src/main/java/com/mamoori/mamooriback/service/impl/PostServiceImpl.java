@@ -1,5 +1,6 @@
 package com.mamoori.mamooriback.service.impl;
 
+import com.mamoori.mamooriback.dto.PostResDto;
 import com.mamoori.mamooriback.entity.Post;
 import com.mamoori.mamooriback.repository.PostRepository;
 import com.mamoori.mamooriback.service.PostService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
@@ -36,9 +38,9 @@ public class PostServiceImpl implements PostService {
                     case "receiver":
                         predicates.add(builder.like(root.get("receiver").as(String.class), likeValue));
                         break;
-                    case "createdAt":
-                        predicates.add(builder.like(root.get("createdAt").as(String.class), likeValue));
-                        break;
+//                    case "createAt":
+//                        predicates.add(builder.like(root.get("createAt").as(String.class), likeValue));
+//                        break;
                 }
             });
             return builder.and(predicates.toArray(new Predicate[0]));
@@ -46,9 +48,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPostList(Map<String, Object> filter, Pageable pageable) {
-        return postRepository.findAll(
-            where(searchPost(filter)), pageable
-        );
+    public Page<PostResDto> getPostList(Map<String, Object> filter, Pageable pageable) {
+        Page<Post> list = postRepository.findAll(where(searchPost(filter)), pageable);
+        Page<PostResDto> postList = list.map(m -> PostResDto.builder()
+                .title(m.getTitle())
+                .content(m.getContent())
+                .receiver(m.getReceiver())
+                .createAt(m.getCreateAt().toString())
+                .updateAt(m.getUpdateAt().toString())
+                .build());
+
+        return postList;
     }
 }
