@@ -28,18 +28,30 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-
 	implementation "io.springfox:springfox-boot-starter:3.0.0"
 	implementation "io.springfox:springfox-swagger-ui:3.0.0"
+
+	// Database
 	testImplementation 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
+
+	// Gson
 	implementation 'com.google.code.gson:gson:2.8.7'
+
+	// Lombok
 	implementation 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor('org.projectlombok:lombok:1.18.22')
+
+	// JWT
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+	// OAuth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 }
 

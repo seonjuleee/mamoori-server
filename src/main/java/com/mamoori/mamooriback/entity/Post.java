@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Getter @Setter
 public class Post extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "post_id")
+    private Long postId;
 
     @Column
     private String title;
@@ -24,8 +25,14 @@ public class Post extends BaseTimeEntity {
     @Column
     private Long views;
 
+    // User와 Post는 1:N 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    // PostCategory와 Post는 1:N 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private PostCategory category;
 
 }

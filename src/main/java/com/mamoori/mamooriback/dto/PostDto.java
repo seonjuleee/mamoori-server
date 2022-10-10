@@ -7,14 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PostDto {
-    private Long id;
+    private Long postId;
     private String title;
     private String content;
     private String receiver;
     private Long views;
 
     public PostDto(Post post) {
-        this.id = post.getId();
+        this.postId = post.getPostId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.receiver = post.getReceiver();
