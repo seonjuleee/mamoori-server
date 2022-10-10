@@ -28,14 +28,27 @@ public class CommunityController {
     /**
      * 커뮤니티 글 리스트 조회
      * */
-    @PostMapping("/post")
-    public ResponseEntity<List<PostResDto>> getPostList(@RequestBody PostRequest postRequest,
-                                                        @PageableDefault(size=10, sort="createAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        log.debug("getPostList -> postRequest : {}", postRequest);
-//        log.debug("getPostList -> number : {}, offset : {}", pageable.getPageNumber(), pageable.getOffset());
+    @GetMapping("/posts")
+    public ResponseEntity<List<PostResDto>> getPostList(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String categoryId,
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String createAt,
+            @PageableDefault(size=10, sort="createAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Map<String, Object> filter = new HashMap<>();
-        filter.put("title", postRequest.getTitle());
+        if (title != null) {
+            filter.put("title", title);
+        }
+        if (categoryId != null) {
+            filter.put("categoryId", categoryId);
+        }
+        if (userId != null) {
+            filter.put("userId", userId);
+        }
+        if (createAt != null) {
+            filter.put("createAt", createAt);
+        }
 
         Page<PostResDto> list = postService.getPostList(filter, pageable);
 

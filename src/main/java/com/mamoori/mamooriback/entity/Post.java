@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Getter @Setter
 public class Post extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "post_id")
+    private Long postId;
 
     @Column
     private String title;
