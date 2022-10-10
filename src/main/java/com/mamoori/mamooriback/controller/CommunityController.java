@@ -56,4 +56,14 @@ public class CommunityController {
                 .body(list.getContent());
     }
 
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<PostResDto> getPost(
+            @PathVariable(name = "postId") Long postId) throws Exception {
+        PostResDto postResDto = postService.getPostById(postId);
+
+        return ResponseEntity.ok()
+                .body(postResDto);
+
+    }
+
 }

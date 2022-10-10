@@ -67,7 +67,26 @@ public class PostServiceImpl implements PostService {
                 .userId(m.getUser().getUserId())
                 .categoryId(m.getCategory().getCategoryId())
                 .build());
-
         return postList;
+    }
+
+    @Override
+    public PostResDto getPostById(Long postId) throws Exception {
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("postId", postId);
+        Post post = postRepository.findOne(where(searchPost(filter)))
+                .orElseThrow(() -> new Exception("The post doesn't exist."));
+
+        return PostResDto.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .receiver(post.getReceiver())
+                .createAt(post.getCreateAt().toString())
+                .updateAt(post.getUpdateAt().toString())
+                .views(post.getViews())
+                .userId(post.getUser().getUserId())
+                .categoryId(post.getCategory().getCategoryId())
+                .build();
     }
 }

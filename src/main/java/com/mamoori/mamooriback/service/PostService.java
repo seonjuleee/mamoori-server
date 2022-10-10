@@ -9,4 +9,5 @@ import java.util.Map;
 
 public interface PostService {
     Page<PostResDto> getPostList(Map<String, Object> filter, Pageable pageable);
+    PostResDto getPostById(Long postId) throws Exception;
 }
