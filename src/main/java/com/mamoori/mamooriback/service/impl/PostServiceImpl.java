@@ -3,6 +3,10 @@ package com.mamoori.mamooriback.service.impl;
 import com.mamoori.mamooriback.controller.request.PostRequest;
 import com.mamoori.mamooriback.dto.PostResponse;
 import com.mamoori.mamooriback.entity.Post;
+import com.mamoori.mamooriback.entity.PostCategory;
+import com.mamoori.mamooriback.oauth.User;
+import com.mamoori.mamooriback.oauth.UserRepository;
+import com.mamoori.mamooriback.repository.PostCategoryRepository;
 import com.mamoori.mamooriback.repository.PostRepository;
 import com.mamoori.mamooriback.service.PostService;
 import com.mamoori.mamooriback.util.StringUtil;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
@@ -24,6 +29,8 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
+    private final PostCategoryRepository postCategoryRepository;
+    private final UserRepository userRepository;
 
     private static Specification<Post> searchPost(Map<String, Object> filter) {
         return ((root, query, builder) -> {
@@ -90,4 +97,23 @@ public class PostServiceImpl implements PostService {
                 .categoryId(post.getCategory().getCategoryId())
                 .build();
     }
+
+    @Override
+    @Transactional
+    public Long savePost(String email, PostRequest postRequest) {
+        PostCategory findCategory = postCategoryRepository.findById(postRequest.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("The category doesn't exist."));
+        User findUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("The user doesn't exist."));
+        Post post = Post.builder()
+                .title(postRequest.getTitle())
+                .content(postRequest.getContent())
+                .category(findCategory)
+                .user(findUser)
+                .build();
+        return postRepository.save(post).getPostId();
+    }
+
+
+
 }

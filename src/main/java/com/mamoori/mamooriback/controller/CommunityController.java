@@ -67,6 +67,19 @@ public class CommunityController {
 
     }
 
+    /**
+     * 커뮤니티 글 추가
+     * */
+    @PostMapping("/posts")
+    public ResponseEntity<?> createPost(@RequestBody PostRequest postRequest) throws Exception {
+        // TODO email session 이용하기
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User)principal;
+//        String email = user.getEmail();
+//        System.out.println("email = " + email);
+        String email = "dtw8073297@daum.net"; // session 추가 전 test! TODO 지우기
+        postService.savePost(email, postRequest);
+        return (ResponseEntity<?>) ResponseEntity.ok().build();
     }
 
 }

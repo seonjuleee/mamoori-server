@@ -10,4 +10,6 @@ import java.util.Map;
 public interface PostService {
     Page<PostResponse> getPostList(Map<String, Object> filter, Pageable pageable);
     PostResponse getPostById(Long postId) throws Exception;
+    Long savePost(String email, PostRequest postRequest);
+
 }
