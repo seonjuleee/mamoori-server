@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostResDto {
+public class PostResponse {
     private Long postId;
     private String title;
     private String content;

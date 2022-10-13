@@ -1,6 +1,7 @@
 package com.mamoori.mamooriback.service.impl;
 
-import com.mamoori.mamooriback.dto.PostResDto;
+import com.mamoori.mamooriback.controller.request.PostRequest;
+import com.mamoori.mamooriback.dto.PostResponse;
 import com.mamoori.mamooriback.entity.Post;
 import com.mamoori.mamooriback.repository.PostRepository;
 import com.mamoori.mamooriback.service.PostService;
@@ -52,11 +53,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostResDto> getPostList(Map<String, Object> filter, Pageable pageable) {
+    public Page<PostResponse> getPostList(Map<String, Object> filter, Pageable pageable) {
         Pageable sortPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createAt").descending());
         Page<Post> list = postRepository.findAll(where(searchPost(filter)), sortPageable);
-        Page<PostResDto> postList = list.map(m ->
-                PostResDto.builder()
+        Page<PostResponse> postList = list.map(m ->
+                PostResponse.builder()
                 .postId(m.getPostId())
                 .title(m.getTitle())
                 .content(m.getContent())
@@ -71,13 +72,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResDto getPostById(Long postId) throws Exception {
+    public PostResponse getPostById(Long postId) throws Exception {
         Map<String, Object> filter = new HashMap<>();
         filter.put("postId", postId);
         Post post = postRepository.findOne(where(searchPost(filter)))
                 .orElseThrow(() -> new Exception("The post doesn't exist."));
 
-        return PostResDto.builder()
+        return PostResponse.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent())

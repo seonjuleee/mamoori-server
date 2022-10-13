@@ -1,7 +1,7 @@
 package com.mamoori.mamooriback.controller;
 
 import com.mamoori.mamooriback.controller.request.PostRequest;
-import com.mamoori.mamooriback.dto.PostResDto;
+import com.mamoori.mamooriback.dto.PostResponse;
 import com.mamoori.mamooriback.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class CommunityController {
      * 커뮤니티 글 리스트 조회
      * */
     @GetMapping("/posts")
-    public ResponseEntity<List<PostResDto>> getPostList(
+    public ResponseEntity<List<PostResponse>> getPostList(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String categoryId,
             @RequestParam(required = false) String userId,
@@ -48,7 +48,7 @@ public class CommunityController {
             filter.put("createAt", createAt);
         }
 
-        Page<PostResDto> list = postService.getPostList(filter, pageable);
+        Page<PostResponse> list = postService.getPostList(filter, pageable);
 
         return ResponseEntity.ok()
                 .body(list.getContent());
@@ -58,12 +58,14 @@ public class CommunityController {
      * 글 id로 커뮤니티 글 조회
      * */
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostResDto> getPost(
+    public ResponseEntity<PostResponse> getPost(
             @PathVariable(name = "postId") Long postId) throws Exception {
-        PostResDto postResDto = postService.getPostById(postId);
+        PostResponse postResponse = postService.getPostById(postId);
 
         return ResponseEntity.ok()
-                .body(postResDto);
+                .body(postResponse);
+
+    }
 
     }
 
