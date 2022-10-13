@@ -5,8 +5,6 @@ import com.mamoori.mamooriback.dto.PostResDto;
 import com.mamoori.mamooriback.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,7 +22,7 @@ import java.util.Map;
 @RequestMapping(value = "/community")
 public class CommunityController {
     private final PostService postService;
-
+    // TODO result 형태 변경하기(상태코드 포함)
     /**
      * 커뮤니티 글 리스트 조회
      * */
@@ -56,6 +54,9 @@ public class CommunityController {
                 .body(list.getContent());
     }
 
+    /**
+     * 글 id로 커뮤니티 글 조회
+     * */
     @GetMapping("/posts/{postId}")
     public ResponseEntity<PostResDto> getPost(
             @PathVariable(name = "postId") Long postId) throws Exception {
