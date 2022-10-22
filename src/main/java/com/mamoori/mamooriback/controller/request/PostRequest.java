@@ -11,6 +11,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostRequest {
     private String title;
-    private String categoryId; // Category
-    private Long userId; // User
+    private String content;
+    private Long categoryId;
 }

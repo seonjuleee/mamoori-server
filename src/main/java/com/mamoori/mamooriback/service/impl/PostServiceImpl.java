@@ -1,7 +1,12 @@
 package com.mamoori.mamooriback.service.impl;
 
-import com.mamoori.mamooriback.dto.PostResDto;
+import com.mamoori.mamooriback.controller.request.PostRequest;
+import com.mamoori.mamooriback.dto.PostResponse;
 import com.mamoori.mamooriback.entity.Post;
+import com.mamoori.mamooriback.entity.PostCategory;
+import com.mamoori.mamooriback.oauth.User;
+import com.mamoori.mamooriback.oauth.UserRepository;
+import com.mamoori.mamooriback.repository.PostCategoryRepository;
 import com.mamoori.mamooriback.repository.PostRepository;
 import com.mamoori.mamooriback.service.PostService;
 import com.mamoori.mamooriback.util.StringUtil;
@@ -12,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
@@ -23,6 +29,8 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
+    private final PostCategoryRepository postCategoryRepository;
+    private final UserRepository userRepository;
 
     private static Specification<Post> searchPost(Map<String, Object> filter) {
         return ((root, query, builder) -> {
@@ -52,11 +60,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostResDto> getPostList(Map<String, Object> filter, Pageable pageable) {
+    public Page<PostResponse> getPostList(Map<String, Object> filter, Pageable pageable) {
         Pageable sortPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createAt").descending());
         Page<Post> list = postRepository.findAll(where(searchPost(filter)), sortPageable);
-        Page<PostResDto> postList = list.map(m ->
-                PostResDto.builder()
+        Page<PostResponse> postList = list.map(m ->
+                PostResponse.builder()
                 .postId(m.getPostId())
                 .title(m.getTitle())
                 .content(m.getContent())
@@ -71,13 +79,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResDto getPostById(Long postId) throws Exception {
+    public PostResponse getPostById(Long postId) throws Exception {
         Map<String, Object> filter = new HashMap<>();
         filter.put("postId", postId);
         Post post = postRepository.findOne(where(searchPost(filter)))
                 .orElseThrow(() -> new Exception("The post doesn't exist."));
 
-        return PostResDto.builder()
+        return PostResponse.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -89,4 +97,23 @@ public class PostServiceImpl implements PostService {
                 .categoryId(post.getCategory().getCategoryId())
                 .build();
     }
+
+    @Override
+    @Transactional
+    public Long savePost(String email, PostRequest postRequest) {
+        PostCategory findCategory = postCategoryRepository.findById(postRequest.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("The category doesn't exist."));
+        User findUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("The user doesn't exist."));
+        Post post = Post.builder()
+                .title(postRequest.getTitle())
+                .content(postRequest.getContent())
+                .category(findCategory)
+                .user(findUser)
+                .build();
+        return postRepository.save(post).getPostId();
+    }
+
+
+
 }

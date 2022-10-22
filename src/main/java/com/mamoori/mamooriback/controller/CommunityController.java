@@ -1,12 +1,10 @@
 package com.mamoori.mamooriback.controller;
 
 import com.mamoori.mamooriback.controller.request.PostRequest;
-import com.mamoori.mamooriback.dto.PostResDto;
+import com.mamoori.mamooriback.dto.PostResponse;
 import com.mamoori.mamooriback.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,12 +22,12 @@ import java.util.Map;
 @RequestMapping(value = "/community")
 public class CommunityController {
     private final PostService postService;
-
+    // TODO result 형태 변경하기(상태코드 포함)
     /**
      * 커뮤니티 글 리스트 조회
      * */
     @GetMapping("/posts")
-    public ResponseEntity<List<PostResDto>> getPostList(
+    public ResponseEntity<List<PostResponse>> getPostList(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String categoryId,
             @RequestParam(required = false) String userId,
@@ -50,20 +48,38 @@ public class CommunityController {
             filter.put("createAt", createAt);
         }
 
-        Page<PostResDto> list = postService.getPostList(filter, pageable);
+        Page<PostResponse> list = postService.getPostList(filter, pageable);
 
         return ResponseEntity.ok()
                 .body(list.getContent());
     }
 
+    /**
+     * 글 id로 커뮤니티 글 조회
+     * */
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostResDto> getPost(
+    public ResponseEntity<PostResponse> getPost(
             @PathVariable(name = "postId") Long postId) throws Exception {
-        PostResDto postResDto = postService.getPostById(postId);
+        PostResponse postResponse = postService.getPostById(postId);
 
         return ResponseEntity.ok()
-                .body(postResDto);
+                .body(postResponse);
 
+    }
+
+    /**
+     * 커뮤니티 글 추가
+     * */
+    @PostMapping("/posts")
+    public ResponseEntity<?> createPost(@RequestBody PostRequest postRequest) throws Exception {
+        // TODO email session 이용하기
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = (User)principal;
+//        String email = user.getEmail();
+//        System.out.println("email = " + email);
+        String email = "dtw8073297@daum.net"; // session 추가 전 test! TODO 지우기
+        postService.savePost(email, postRequest);
+        return (ResponseEntity<?>) ResponseEntity.ok().build();
     }
 
 }
