@@ -2,3 +2,22 @@ spring:
   config:
     activate:
       on-profile: local
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: ENC(66rpaeQ/K9EwQ1UMkK95nYi0cFmN4VJF9w3bIpOWKfByjxpJJZayHG3KLK523aK1)
+    username: ENC(T5uMrj+Oi6dhtumwep3lPQ==)
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create  # create: 애플리케이션 실행 시점에 테이블 drop 후 다시 생성
+    properties:
+      hibernate:
+#        show_sql: true  # System.out에 Hibernate 실행 SQL 남기기
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug  # logger를 통해 Hibernate 실행 SQL 남기기
+jasypt:
+  encryptor:
+    bean: encryptorBean
