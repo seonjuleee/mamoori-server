@@ -6,10 +6,10 @@ build/
 !**/src/test/**/build/
 
 
-### DB ###
-src/main/resources/application*.yaml
-src/main/resources/application*.yml
-
+### Key ###
+#src/main/resources/application*.yaml
+#src/main/resources/application*.yml
+src/main/resources/application-key.yaml
 
 ### STS ###
 .apt_generated
