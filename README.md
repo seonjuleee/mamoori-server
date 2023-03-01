@@ -5,7 +5,7 @@
 master: 사용자에게 배포 가능한 상태만 관리하는 브랜치. release 이력 관리하기 위해 사용
 develop: 다음 출시 버전을 개발하는 브랜치
 feature: 기능을 개발하는 브랜치
-    - feature/{기능-이름}
+    - feature/{이슈번호}/{기능-이름}
     ex) feature/login
 release: 이번 출시 버전을 준비하는 브랜치
     - release-{버전}
