@@ -1,6 +1,6 @@
 # server
 
-### Git branch naming
+## Git branch naming
 ```
 master: 사용자에게 배포 가능한 상태만 관리하는 브랜치. release 이력 관리하기 위해 사용
 develop: 다음 출시 버전을 개발하는 브랜치
@@ -29,3 +29,6 @@ hotfix: 출시 버전에서 발생한 버그를 수정하는 브랜치
 | `Chore: `            | 빌드 테스트 업데이트, 패키지 매니저를 설정하는 경우(프로덕션 코드 변경 X) |
 | `Rename: `           | 파일 혹은 폴더명을 수정하거나 옮기는 작업만인 경우                        |
 | `Remove: `           | 파일을 삭제하는 작업만 수행한 경우                                        |
+
+## ER Diagram
+<img width="1017" alt="스크린샷 2023-03-12 15 19 49" src="https://user-images.githubusercontent.com/52817735/224543897-f13626cd-3c81-4755-8bed-4c8e84e1468a.png">
