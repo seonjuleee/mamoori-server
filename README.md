@@ -31,4 +31,4 @@ hotfix: 출시 버전에서 발생한 버그를 수정하는 브랜치
 | `Remove: `           | 파일을 삭제하는 작업만 수행한 경우                                        |
 
 ## ER Diagram
-<img width="1017" alt="스크린샷 2023-03-12 15 19 49" src="https://user-images.githubusercontent.com/52817735/224543897-f13626cd-3c81-4755-8bed-4c8e84e1468a.png">
+<img width="1550" alt="스크린샷 2023-03-25 16 24 28" src="https://user-images.githubusercontent.com/52817735/227703425-7e39f3c4-b941-4377-809a-1abee27d4782.png">
