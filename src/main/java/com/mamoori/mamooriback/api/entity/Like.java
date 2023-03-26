@@ -1,4 +1,4 @@
-package com.mamoori.mamooriback.entity;
+package com.mamoori.mamooriback.api.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,8 @@ import javax.persistence.*;
 
 @Entity
 @Getter @Setter
-public class Comment extends BaseTimeEntity {
+@Table(name = "likes")
+public class Like extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

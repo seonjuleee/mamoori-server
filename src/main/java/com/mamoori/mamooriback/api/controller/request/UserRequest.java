@@ -1,7 +1,7 @@
-package com.mamoori.mamooriback.controller.request;
+package com.mamoori.mamooriback.api.controller.request;
 
 
-import com.mamoori.mamooriback.entity.Role;
+import com.mamoori.mamooriback.api.entity.Role;
 
 public class UserRequest {
 

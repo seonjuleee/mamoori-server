@@ -1,6 +1,6 @@
-package com.mamoori.mamooriback.dto;
+package com.mamoori.mamooriback.api.dto;
 
-import com.mamoori.mamooriback.entity.Post;
+import com.mamoori.mamooriback.api.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
 

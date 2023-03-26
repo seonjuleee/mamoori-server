@@ -1,14 +1,14 @@
-package com.mamoori.mamooriback.service.impl;
+package com.mamoori.mamooriback.api.service.impl;
 
-import com.mamoori.mamooriback.controller.request.PostRequest;
-import com.mamoori.mamooriback.dto.PostResponse;
-import com.mamoori.mamooriback.entity.Post;
-import com.mamoori.mamooriback.entity.PostCategory;
-import com.mamoori.mamooriback.entity.User;
-import com.mamoori.mamooriback.repository.PostCategoryRepository;
-import com.mamoori.mamooriback.repository.PostRepository;
-import com.mamoori.mamooriback.repository.UserRepository;
-import com.mamoori.mamooriback.service.PostService;
+import com.mamoori.mamooriback.api.controller.request.PostRequest;
+import com.mamoori.mamooriback.api.dto.PostResponse;
+import com.mamoori.mamooriback.api.entity.Post;
+import com.mamoori.mamooriback.api.repository.PostCategoryRepository;
+import com.mamoori.mamooriback.api.repository.PostRepository;
+import com.mamoori.mamooriback.api.repository.UserRepository;
+import com.mamoori.mamooriback.api.service.PostService;
+import com.mamoori.mamooriback.api.entity.PostCategory;
+import com.mamoori.mamooriback.api.entity.User;
 import com.mamoori.mamooriback.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

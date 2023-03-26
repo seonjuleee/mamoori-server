@@ -1,4 +1,4 @@
-package com.mamoori.mamooriback.dto;
+package com.mamoori.mamooriback.api.dto;
 
 import lombok.Builder;
 import lombok.Getter;

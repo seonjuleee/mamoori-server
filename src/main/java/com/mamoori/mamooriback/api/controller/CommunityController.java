@@ -1,8 +1,8 @@
-package com.mamoori.mamooriback.controller;
+package com.mamoori.mamooriback.api.controller;
 
-import com.mamoori.mamooriback.controller.request.PostRequest;
-import com.mamoori.mamooriback.dto.PostResponse;
-import com.mamoori.mamooriback.service.PostService;
+import com.mamoori.mamooriback.api.dto.PostResponse;
+import com.mamoori.mamooriback.api.service.PostService;
+import com.mamoori.mamooriback.api.controller.request.PostRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

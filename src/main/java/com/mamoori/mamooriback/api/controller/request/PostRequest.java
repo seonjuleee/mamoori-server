@@ -1,4 +1,4 @@
-package com.mamoori.mamooriback.controller.request;
+package com.mamoori.mamooriback.api.controller.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

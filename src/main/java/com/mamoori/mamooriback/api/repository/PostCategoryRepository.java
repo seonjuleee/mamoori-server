@@ -1,6 +1,6 @@
-package com.mamoori.mamooriback.repository;
+package com.mamoori.mamooriback.api.repository;
 
-import com.mamoori.mamooriback.entity.PostCategory;
+import com.mamoori.mamooriback.api.entity.PostCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

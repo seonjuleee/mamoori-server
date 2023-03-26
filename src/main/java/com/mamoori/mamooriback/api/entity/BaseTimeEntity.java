@@ -1,4 +1,4 @@
-package com.mamoori.mamooriback.entity;
+package com.mamoori.mamooriback.api.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
