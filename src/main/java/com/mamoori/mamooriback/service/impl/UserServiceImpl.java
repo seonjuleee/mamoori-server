@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.mamoori.mamooriback.entity.User;
+import com.mamoori.mamooriback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mamoori.mamooriback.controller.request.UserRequest;
-import com.mamoori.mamooriback.oauth.User;
-import com.mamoori.mamooriback.oauth.UserRepository;
 import com.mamoori.mamooriback.service.UserService;
 
 @Service

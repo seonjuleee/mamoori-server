@@ -1,6 +1,7 @@
 package com.mamoori.mamooriback.controller.request;
 
-import com.mamoori.mamooriback.oauth.Role;
+
+import com.mamoori.mamooriback.entity.Role;
 
 public class UserRequest {
 

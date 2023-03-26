@@ -1,4 +1,4 @@
-package com.mamoori.mamooriback.oauth;
+package com.mamoori.mamooriback.entity;
 
 import java.io.Serializable;
 

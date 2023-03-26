@@ -1,6 +1,5 @@
 package com.mamoori.mamooriback.entity;
 
-import com.mamoori.mamooriback.oauth.User;
 import lombok.*;
 
 import javax.persistence.*;
