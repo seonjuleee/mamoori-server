@@ -1,3 +1,4 @@
+/*
 package com.mamoori.mamooriback.controller;
 
 import java.io.IOException;
@@ -29,3 +30,4 @@ public class OAuthController {
 		return jwtToken;
 	}
 }
+*/
