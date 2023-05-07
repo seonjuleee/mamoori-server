@@ -23,27 +23,20 @@ public class User extends BaseTimeEntity implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId = null;
+    @Column(name = "id")
+    private Long userId;
 
-    @Column(name = "social_id")
-    private Long socialId;
+    @Column(name = "social_type")
+    private String social;
 
     @Column(nullable = false)
     private String email;
 
-
-    @Column(name = "nick_name")
-    private String nickName;
-
-    private String picture;
-
-
+    @Column(name = "name")
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false)
     private Role role;
-
-
 }
 
