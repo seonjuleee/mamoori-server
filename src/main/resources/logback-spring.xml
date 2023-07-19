@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <!-- Appenders --> <!-- 로그 출력 위치 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder> <!-- 로그 형식 -->
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console-infolog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger --> <!-- 로그 레벨 -->
+    <logger name="com.mamoori" level="DEBUG" appender-ref="console" />
+    <logger name="jdbc.sqlonly" level="DEBUG" appender-ref="console-infolog" />
+    <logger name="jdbc.resultsettable" level="DEBUG" appender-ref="console-infolog" />
+
+    <!-- Root Logger -->
+    <root level="off">
+        <appender-ref ref="console" />
+    </root>
+</configuration>
