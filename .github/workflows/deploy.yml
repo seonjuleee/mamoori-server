@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - release # release branch에 push가 될 때 CD가 일어나도록 설정
+  pull_request:
+    branches:
+      - release
 
 jobs:
   build:
