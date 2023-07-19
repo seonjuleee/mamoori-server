@@ -22,10 +22,10 @@ public class UserServiceImpl implements UserService {
 	private final List<User> users = new ArrayList<>();
 
 	// create 없이 delete update read 만 있어도 됨
-	public User create(UserRequest userParameter) {
-		final User user = new User(userParameter.getUserId(),userParameter.getSocialId(), userParameter.getEmail(),userParameter.getNickName(),userParameter.getPicture(),userParameter.getRole());
-		return userRepository.save(user);
-	}
+//	public User create(UserRequest userParameter) {
+//		final User user = new User(userParameter.getUserId(),userParameter.getSocialId(), userParameter.getEmail(),userParameter.getNickName(),userParameter.getPicture(),userParameter.getRole());
+//		return userRepository.save(user);
+//	}
 
 	@Override
 	@Transactional
