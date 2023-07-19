@@ -34,7 +34,7 @@ dependencies {
 
 	// Database
 	runtimeOnly 'com.h2database:h2'
-//	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'mysql:mysql-connector-java'
 
 	// Gson
 	implementation 'com.google.code.gson:gson:2.8.7'
