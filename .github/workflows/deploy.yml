@@ -19,6 +19,7 @@ jobs:
         with:
           java-version: '11'
           token: ${{ secrets.auth }}
+          distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
