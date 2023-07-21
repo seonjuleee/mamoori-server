@@ -54,4 +54,4 @@ jobs:
           environment_name: Mamoori-server-env
           version_label: github-action-${{steps.current-time.outputs.formattedTime}} # timestamp 이용하여 배포 버전 구분
           region: us-east-2
-          deployment_package: deploy.zip
+          deployment_package: deploy/deploy.zip
