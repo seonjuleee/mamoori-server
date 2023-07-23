@@ -9,7 +9,7 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: create  # create: 애플리케이션 실행 시점에 테이블 drop 후 다시 생성
+      ddl-auto: update  # create: 애플리케이션 실행 시점에 테이블 drop 후 다시 생성
     properties:
       hibernate:
 #        show_sql: true  # System.out에 Hibernate 실행 SQL 남기기
