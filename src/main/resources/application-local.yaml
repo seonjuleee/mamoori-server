@@ -2,22 +2,34 @@ spring:
   config:
     activate:
       on-profile: local
+
+  # DB
   datasource:
     driver-class-name: org.h2.Driver
-    url: ENC(66rpaeQ/K9EwQ1UMkK95nYi0cFmN4VJF9w3bIpOWKfByjxpJJZayHG3KLK523aK1)
+#    url: ENC(66rpaeQ/K9EwQ1UMkK95nYi0cFmN4VJF9w3bIpOWKfByjxpJJZayHG3KLK523aK1)
+    url: jdbc:h2:tcp://localhost/~/mamoori
     username: ENC(T5uMrj+Oi6dhtumwep3lPQ==)
     password:
   jpa:
     hibernate:
-      ddl-auto: update  # create: 애플리케이션 실행 시점에 테이블 drop 후 다시 생성
+      ddl-auto: create  # create: 애플리케이션 실행 시점에 테이블 drop 후 다시 생성
     properties:
       hibernate:
 #        show_sql: true  # System.out에 Hibernate 실행 SQL 남기기
         format_sql: true
-
+  h2:
+    console:
+      enabled: true
 logging:
   level:
     org.hibernate.SQL: debug  # logger를 통해 Hibernate 실행 SQL 남기기
 jasypt:
   encryptor:
     bean: encryptorBean
+jwt:
+  access:
+    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    header: Authorization
+  refresh:
+    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    header: Authorization-refresh

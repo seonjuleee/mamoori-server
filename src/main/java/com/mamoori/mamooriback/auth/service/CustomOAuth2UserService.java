@@ -23,6 +23,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private static final String NAVER = "naver";
     private static final String GOOGLE = "google";
 
+//    private static final int EXPIRES_IN = 100; // TODO 만료일 조정
+
+//    private final UserRepository userRepository;
+//    private final AuthTokenRepository authTokenRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.debug("userRequest -> client registration : {}", userRequest.getClientRegistration());
@@ -35,15 +40,43 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 oAuth2User.getAttributes()
         );
 
-        log.debug("oauthUserInfo : {}", oauthUserInfo);
+        log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getProvider());
+        log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getProviderId());
+        log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getEmail());
+        log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getName());
+
+//        User user = User.builder()
+//                .name(oauthUserInfo.getName())
+//                .email(oauthUserInfo.getEmail())
+//                .role(Role.USER)
+//                .build();
+
+//        String token = userRequest.getAccessToken().getTokenValue();
+//        String social = userRequest.getClientRegistration().getRegistrationId();
+//        long expired = getExpired();
+//
+//        AuthToken authToken = AuthToken.builder()
+//                .accessToken(token)
+//                .refreshToken(token)
+//                .expired(expired)
+//                .user(user)
+//                .socialType(social)
+//                .build();
+//
+//        log.debug("authToken : {}", authToken);
+//
+//        createUser(user, authToken);
 
         return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(Role.USER.getCode())),
                 oAuth2User.getAttributes(),
                 userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(),
                 oauthUserInfo.getEmail(),
+                oauthUserInfo.getName(),
+                oauthUserInfo.getProvider(),
                 Role.USER
         );
+//        return super.loadUser(userRequest);
     }
 
     private OauthUserInfo getOauthUserInfoByRegistrationId(String registrationId, Map<String, Object> attributes) {
@@ -55,4 +88,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         return null;
     }
+
+//    private void createUser(User user, AuthToken authToken) {
+//        log.debug("createUser -> email : {}", user.getEmail());
+//        Optional<User> findUser = userRepository.findByEmail(user.getEmail());
+//
+//        // 처음 서비스를 이용한 회원일 경우 회원 생성
+//        if (!findUser.isPresent()) {
+//            userRepository.save(user);
+//            authTokenRepository.save(authToken);
+//        }
+//
+//    }
+//
+//    private long getExpired() {
+//        return System.currentTimeMillis() + EXPIRES_IN;
+//    }
 }

@@ -3,11 +3,11 @@ spring:
     activate:
       on-profile: prod
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DBNAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DBNAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    username: ${RDS_USERNAME}
+#    password: ${RDS_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,3 +26,9 @@ jasypt:
 jwt:
   # base64로 인코딩된 암호 키, HS512 사용하므로 512bit=64byte 이상의 문자
   secretKey: ${KEY_JWT}
+  access:
+    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
+    header: Authorization
+  refresh:
+    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
+    header: Authorization-refresh

@@ -1,15 +1,12 @@
 package com.mamoori.mamooriback.api.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Builder
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Token extends BaseTimeEntity {
@@ -23,8 +20,11 @@ public class Token extends BaseTimeEntity {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @Column(name = "expired")
-    private long expired;
+    @Column(name = "social_type")
+    private String socialType;
+
+//    @Column(name = "expired")
+//    private long expired;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
