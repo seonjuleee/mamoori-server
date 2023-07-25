@@ -42,6 +42,6 @@ public class GoogleOauthUserInfo implements OauthUserInfo {
     }
 
     private Map<String, Object> getResponse() {
-        return (Map<String, Object>) attributes.get("response");
+        return this.attributes;
     }
 }

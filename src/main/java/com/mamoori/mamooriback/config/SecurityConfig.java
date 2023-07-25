@@ -1,37 +1,57 @@
-
 package com.mamoori.mamooriback.config;
 
-import com.mamoori.mamooriback.api.entity.Role;
-import com.mamoori.mamooriback.auth.service.CustomOAuth2UserService;
+import com.mamoori.mamooriback.auth.filter.JwtAuthenticationProcessingFilter;
+import com.mamoori.mamooriback.auth.handler.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CorsConfig corsConfig;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/css/**", "/images/**", "/js/**").permitAll() // 접근 권한 설정
-                .antMatchers("/auth/**", "/api/**").hasRole(Role.USER.name()) // 접근 권한 설정
+                .antMatchers("/", "/css/**", "/images/**", "/js/**", "/auth/**", "/api/**").permitAll() // 접근 권한 설정
                 .anyRequest().authenticated().and()
-                .logout().logoutSuccessUrl("/").and() // logout 성공시 URL
+//                .logout().logoutSuccessUrl("/").and() // logout 성공시 URL
                 .oauth2Login()
-                .authorizationEndpoint().baseUri("/auth/signin").and() // 로그인 접근 URI
+                .successHandler(oAuth2LoginSuccessHandler)
+//                .failureHandler(oAuth2LoginFailureHandler)
+                .authorizationEndpoint().baseUri("/auth/signin/**").and() // 로그인 접근 URI
                 .redirectionEndpoint().baseUri("/auth/callback/**").and() // redirect URI
-                .userInfoEndpoint().userService(customOAuth2UserService) // 로그인 이후 service
                 ;
+
+        http.addFilter(corsConfig.corsFilter())
+                .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+        return new JwtAuthenticationProcessingFilter();
+    }
+
 }
 
