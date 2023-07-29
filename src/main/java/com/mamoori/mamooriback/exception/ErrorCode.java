@@ -19,7 +19,7 @@ public enum ErrorCode {
     INVALID_REQUEST(1001, HttpStatus.BAD_REQUEST, "요청한 값이 올바르지 않습니다."),
 
     // User
-    USER_NOT_FOUND(2001, HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."),
+    USER_NOT_FOUND(2001, HttpStatus.FORBIDDEN, "회원 정보를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(2002, HttpStatus.BAD_REQUEST, "회원이 이미 존재합니다."),
 
     ;
