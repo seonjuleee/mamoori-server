@@ -60,6 +60,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             // API 처리
             jwtService.extractEmailByAccessToken(optionalAccessToken.get())
                     .ifPresent(email -> userRepository.findByEmail(email));
+            filterChain.doFilter(request, response);
             return;
         } else {
             // access token 재발급
@@ -88,6 +89,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                     jwtService.setAccessTokenHeader(response, reIssueAccessToken);
                     jwtService.setRefreshTokenCookie(response, reIssueRefreshToken);
 
+                    filterChain.doFilter(request, response);
                     return;
                 } else {
                     // error handling
@@ -105,7 +107,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 //                // redirect login
                 response.sendRedirect("/login"); // TODO 수정하기
             }
-
+            filterChain.doFilter(request, response);
         }
     }
 }

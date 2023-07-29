@@ -28,7 +28,7 @@ jasypt:
     bean: encryptorBean
 jwt:
   access:
-    expiration: 60000 # 1분
+    expiration: 81400000 # 1일
 #    expiration: 3600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
     header: Authorization
   refresh:
