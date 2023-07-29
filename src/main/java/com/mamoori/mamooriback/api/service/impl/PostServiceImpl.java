@@ -1,6 +1,6 @@
 package com.mamoori.mamooriback.api.service.impl;
 
-import com.mamoori.mamooriback.api.controller.request.PostRequest;
+import com.mamoori.mamooriback.api.dto.PostRequest;
 import com.mamoori.mamooriback.api.dto.PostResponse;
 import com.mamoori.mamooriback.api.entity.Post;
 import com.mamoori.mamooriback.api.repository.PostCategoryRepository;

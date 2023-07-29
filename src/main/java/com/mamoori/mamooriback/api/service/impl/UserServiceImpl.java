@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.mamoori.mamooriback.api.controller.request.UserRequest;
+import com.mamoori.mamooriback.api.dto.UserResponse;
 import com.mamoori.mamooriback.api.service.UserService;
 import com.mamoori.mamooriback.api.entity.User;
 import com.mamoori.mamooriback.api.repository.UserRepository;
