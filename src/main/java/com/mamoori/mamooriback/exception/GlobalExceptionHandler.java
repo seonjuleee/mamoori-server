@@ -18,6 +18,14 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(ErrorCode.METHOD_NOT_ALLOWED));
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
+        log.error("handleBusinessException : {}", e.getMessage());
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus().value())
+                .body(new ErrorResponse(e.getErrorCode()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(final Exception e) {
         log.error("handleRuntimeException : {}", e.getMessage());
