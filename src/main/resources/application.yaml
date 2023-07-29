@@ -29,8 +29,24 @@ spring:
           google:
             client-id: ENC(tpqD/CXkruIDaDpOL4LW8PVVTlTUBjc0QoRlmWYWbFNbqQdtnfEwoj8Gw4tOVjnXRDwc2jz4I/gjj5T01RbTRb4q7jGVHw+4fG+MVarGIRa8daOXcEOrpQ==)
             client-secret: ENC(Ozwi6Xh88nVgMU9or0IeNIPIHmesUCZdwEZ+wBH6DjLbIsIGcDobMS5dMBFPATb5)
+            redirect-uri: http://localhost:8080/auth/callback/google
             scope: profile, email
+
+  # DevTools
+  devtools:
+    livereload:
+      enabled: true  # 정적 리소스 변화가 있을 때 바로 반영
+
+  # Thymeleaf
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false  # thymeleaf에 대한 캐시를 남기지 않음
+    check-template-location: true  # 디렉토리에 파일이 있는지 없는지 체크, 없으면 에러 발생
 
 logging:
   level:
     org.hibernate.sql: debug
+  config: classpath:logback-spring.xml
+#server:
+#  port: 8081

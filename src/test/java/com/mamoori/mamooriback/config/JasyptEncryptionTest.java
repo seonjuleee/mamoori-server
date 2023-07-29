@@ -19,10 +19,16 @@ public class JasyptEncryptionTest {
         printEncStr(url);
         printEncStr(username);
         printEncStr(password);
+
+        printDecStr("jv2N6oEwm+ax8wQo/NfuTZIYLwlkuofS");
     }
 
     public void printEncStr(String str) {
         System.out.println(str + " -> ENC(" + jasyptEncoding(str) + ")");
+    }
+
+    public void printDecStr(String str) {
+        System.out.println(str + " -> " + jasyptDecoding(str) + "");
     }
 
     public String jasyptEncoding(String value) {
@@ -30,6 +36,13 @@ public class JasyptEncryptionTest {
         pbeEnc.setAlgorithm("PBEWithMD5AndDES");
         pbeEnc.setPassword(key);
         return pbeEnc.encrypt(value);
+    }
+
+    public String jasyptDecoding(String value) {
+        StandardPBEStringEncryptor pbeEnc = new StandardPBEStringEncryptor();
+        pbeEnc.setAlgorithm("PBEWithMD5AndDES");
+        pbeEnc.setPassword(key);
+        return pbeEnc.decrypt(value);
     }
 
 }
