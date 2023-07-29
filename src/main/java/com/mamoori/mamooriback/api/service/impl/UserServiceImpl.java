@@ -8,6 +8,8 @@ import com.mamoori.mamooriback.api.dto.UserResponse;
 import com.mamoori.mamooriback.api.service.UserService;
 import com.mamoori.mamooriback.api.entity.User;
 import com.mamoori.mamooriback.api.repository.UserRepository;
+import com.mamoori.mamooriback.exception.BusinessException;
+import com.mamoori.mamooriback.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -41,5 +43,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<User> findByEmail(String email) {
 		return userRepository.findByEmail(email);
+	}
+
+	@Override
+	public UserResponse getUserResponseByEmail(String email) {
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new BusinessException(
+						ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+		return new UserResponse(user);
 	}
 }
