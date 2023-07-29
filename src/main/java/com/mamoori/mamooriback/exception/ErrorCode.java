@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // HTTP
     BAD_REQUEST(400, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다."),
+    FORBIDDEN(403, HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     METHOD_NOT_ALLOWED(405, HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 메서드입니다."),
     TOO_MANY_REQUESTS(429, HttpStatus.TOO_MANY_REQUESTS, "요청이 너무 많습니다."),
     INTERNAL_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류입니다."),
