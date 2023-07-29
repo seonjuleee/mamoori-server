@@ -1,12 +1,16 @@
 package com.mamoori.mamooriback.auth.filter;
 
+import com.google.gson.Gson;
 import com.mamoori.mamooriback.api.entity.Token;
 import com.mamoori.mamooriback.api.repository.TokenRepository;
 import com.mamoori.mamooriback.api.repository.UserRepository;
 import com.mamoori.mamooriback.auth.service.JwtService;
+import com.mamoori.mamooriback.exception.ErrorCode;
+import com.mamoori.mamooriback.exception.ErrorResponse;
 import com.mamoori.mamooriback.util.CookieUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -88,7 +92,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                 } else {
                     // error handling
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Unauthorized error"); // 수정
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("UTF-8");
+                    ErrorResponse errorResponse = new ErrorResponse(ErrorCode.UNAUTHORIZED);
+                    response.getWriter().write(new Gson().toJson(errorResponse));
                     return;
                 }
             } else {
