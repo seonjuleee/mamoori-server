@@ -22,14 +22,14 @@ spring:
             client-secret: ENC(jv2N6oEwm+ax8wQo/NfuTZIYLwlkuofS)
             client-authentication-method: POST
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/auth/callback/naver
+            redirect-uri: ${mamoori.url}/auth/callback/naver
             scope:
               - name
               - email
           google:
             client-id: ENC(tpqD/CXkruIDaDpOL4LW8PVVTlTUBjc0QoRlmWYWbFNbqQdtnfEwoj8Gw4tOVjnXRDwc2jz4I/gjj5T01RbTRb4q7jGVHw+4fG+MVarGIRa8daOXcEOrpQ==)
             client-secret: ENC(Ozwi6Xh88nVgMU9or0IeNIPIHmesUCZdwEZ+wBH6DjLbIsIGcDobMS5dMBFPATb5)
-            redirect-uri: http://localhost:8080/auth/callback/google
+            redirect-uri: ${mamoori.url}/auth/callback/google
             scope: profile, email
 
   # DevTools
