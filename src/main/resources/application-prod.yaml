@@ -34,4 +34,4 @@ jwt:
     header: Authorization-refresh
 
 mamoori:
-  url: https://mamoori.life
+  url: https://api.mamoori.life
