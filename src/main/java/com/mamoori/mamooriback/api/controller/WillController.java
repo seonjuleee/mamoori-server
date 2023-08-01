@@ -59,4 +59,15 @@ public class WillController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("/wills/{id}")
+    public ResponseEntity deleteWill(@PathVariable("id") Long willId,
+                                     @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+        log.debug("deleteWill called...");
+        String email = oAuth2UserPrincipal.getEmail();
+        log.debug("deleteWill -> email : {}", email);
+        willService.deleteWill(email, willId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }

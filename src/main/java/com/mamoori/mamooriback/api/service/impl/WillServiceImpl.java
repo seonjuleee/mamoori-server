@@ -63,4 +63,15 @@ public class WillServiceImpl implements WillService {
             willRepository.save(will);
         }
     }
+
+    @Override
+    public void deleteWill(String email, Long willId) {
+        Will will = willRepository.findByWillId(willId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+        if (!will.getUser().getEmail().equals(email)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+        }
+        willRepository.delete(will);
+    }
 }
