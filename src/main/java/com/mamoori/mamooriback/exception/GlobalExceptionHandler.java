@@ -26,6 +26,14 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(e.getErrorCode()));
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResponse> handleNullPointerException(final NullPointerException e) {
+        log.error("handleNullPointerException : {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.UNAUTHORIZED.getStatus().value())
+                .body(new ErrorResponse(ErrorCode.UNAUTHORIZED));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(final Exception e) {
         log.error("handleRuntimeException : {}", e.getMessage());

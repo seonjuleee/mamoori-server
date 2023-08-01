@@ -11,8 +11,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Token extends BaseTimeEntity {
     @Id @GeneratedValue
-    @Column(name = "id")
-    private Long authTokenId;
+    @Column(name = "token_id")
+    private Long tokenId;
 
     @Column(name = "access_token")
     private String accessToken;

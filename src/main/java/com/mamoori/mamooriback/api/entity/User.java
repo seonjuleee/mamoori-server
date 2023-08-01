@@ -1,6 +1,7 @@
 package com.mamoori.mamooriback.api.entity;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -18,7 +19,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(nullable = false)
@@ -30,5 +31,8 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Will> wills = new ArrayList<>();
 }
 
