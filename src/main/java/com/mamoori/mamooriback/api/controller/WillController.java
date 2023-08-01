@@ -1,6 +1,7 @@
 package com.mamoori.mamooriback.api.controller;
 
 import com.mamoori.mamooriback.api.dto.PageResponse;
+import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.service.WillService;
 import com.mamoori.mamooriback.auth.service.CustomOAuth2User;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,16 @@ public class WillController {
 
         return ResponseEntity.ok()
                 .body(willResponse);
+    }
+
+    @PutMapping("/wills")
+    public ResponseEntity putWill(@RequestBody WillRequest willRequest,
+                                  @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+        log.debug("putWill called...");
+        String email = oAuth2UserPrincipal.getEmail();
+        log.debug("putWill -> email : {}", email);
+        willService.putWill(email, willRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

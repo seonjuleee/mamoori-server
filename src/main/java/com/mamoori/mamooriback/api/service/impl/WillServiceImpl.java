@@ -1,8 +1,11 @@
 package com.mamoori.mamooriback.api.service.impl;
 
 import com.mamoori.mamooriback.api.dto.PageResponse;
+import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
+import com.mamoori.mamooriback.api.entity.User;
 import com.mamoori.mamooriback.api.entity.Will;
+import com.mamoori.mamooriback.api.repository.UserRepository;
 import com.mamoori.mamooriback.api.repository.WillRepository;
 import com.mamoori.mamooriback.api.service.WillService;
 import com.mamoori.mamooriback.exception.BusinessException;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class WillServiceImpl implements WillService {
 
     private final WillRepository willRepository;
+    private final UserRepository userRepository;
 
     @Override
     public PageResponse<WillResponse> getWillListByEmail(String email, String title, Pageable pageable) {
@@ -32,5 +36,31 @@ public class WillServiceImpl implements WillService {
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
         return new WillResponse(will);
+    }
+
+    @Override
+    public void putWill(String email, WillRequest willRequest) {
+        if (willRequest.getWillId() == null) {
+            // create
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+            willRepository.save(willRequest.toEntity(user));
+        } else {
+            log.debug("willService.putWill -> willId : {}", willRequest.getWillId());
+            // update
+            Will will = willRepository.findByWillId(willRequest.getWillId())
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+
+            log.debug("willlService.putWill -> email : {}", email);
+            log.debug("willlService.putWill -> email : {}", will.getUser().getEmail());
+            if (!will.getUser().getEmail().equals(email)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+            }
+            will.setTitle(willRequest.getTitle());
+            will.setContent(willRequest.getContent());
+            willRepository.save(will);
+        }
     }
 }
