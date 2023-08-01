@@ -34,4 +34,17 @@ public class WillController {
         return ResponseEntity.ok()
                 .body(willResponsePage);
     }
+
+    @GetMapping("/wills/{id}")
+    public ResponseEntity<WillResponse> getWill(@PathVariable("id") Long willId,
+                                                @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+        log.debug("getWill called...");
+        String email = oAuth2UserPrincipal.getEmail();
+        log.debug("getWill -> email : {}", email);
+        WillResponse willResponse = willService.getWillById(email, willId);
+
+        return ResponseEntity.ok()
+                .body(willResponse);
+    }
+
 }
