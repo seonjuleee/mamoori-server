@@ -1,10 +1,13 @@
 package com.mamoori.mamooriback.api.controller;
 
+import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
 import com.mamoori.mamooriback.api.dto.ChecklistResponse;
 import com.mamoori.mamooriback.api.service.ChecklistService;
+import com.mamoori.mamooriback.auth.service.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +27,17 @@ public class ChecklistController {
         List<ChecklistResponse> checklistItems = checklistService.getChecklistItems();
         return ResponseEntity.ok()
                 .body(checklistItems);
+    }
+
+    @GetMapping("/checklist/last-answer")
+    public ResponseEntity<ChecklistAnswerResponse> getChecklistAnswer(
+            @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+        log.debug("getChecklistAnswer called...");
+        String email = oAuth2UserPrincipal.getEmail();
+        log.debug("getChecklistAnswer -> email : {}", email);
+
+        ChecklistAnswerResponse checklistAnswerResponse = checklistService.getChecklistLastAnswerByEmail(email);
+        return ResponseEntity.ok()
+                .body(checklistAnswerResponse);
     }
 }
