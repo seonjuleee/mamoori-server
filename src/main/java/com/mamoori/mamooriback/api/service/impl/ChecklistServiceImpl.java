@@ -60,4 +60,13 @@ public class ChecklistServiceImpl implements ChecklistService {
             log.debug("putChecklistAnswer -> saveAnswer : {}", saveAnswer.getAnswerId());
         }
     }
+
+    @Override
+    public void deleteUserChecklist(String email, Long userChecklistId) {
+        UserChecklist userChecklist = userChecklistRepository.findByUser_EmailAndUserChecklistId(email, userChecklistId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()
+                ));
+        userChecklistRepository.delete(userChecklist);
+    }
 }

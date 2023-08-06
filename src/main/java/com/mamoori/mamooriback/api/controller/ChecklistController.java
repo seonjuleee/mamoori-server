@@ -54,4 +54,16 @@ public class ChecklistController {
         checklistService.putChecklistAnswer(email, userChecklistAnswerRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/checklist/answers/{id}")
+    public ResponseEntity deleteChecklist(
+            @PathVariable("id") Long userChecklistId,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+        log.debug("deleteChecklist called...");
+        String email = oAuth2UserPrincipal.getEmail();
+        log.debug("deleteChecklist -> email : {}", email);
+
+        checklistService.deleteUserChecklist(email, userChecklistId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

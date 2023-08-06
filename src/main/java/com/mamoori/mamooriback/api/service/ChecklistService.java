@@ -12,4 +12,5 @@ public interface ChecklistService {
     ChecklistAnswerResponse getChecklistLastAnswerByEmail(String email);
     @Transactional
     void putChecklistAnswer(String email, List<UserChecklistAnswerRequest> userChecklistAnswerRequestList);
+    void deleteUserChecklist(String email, Long userChecklistId);
 }
