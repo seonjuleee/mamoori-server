@@ -88,7 +88,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 }
             }
 
-            jwtService.setAccessTokenHeader(response, accessToken);
+            jwtService.setAccessTokenCookie(response, accessToken);
             jwtService.setRefreshTokenCookie(response, refreshToken);
         } catch (Exception e) {
             throw e;

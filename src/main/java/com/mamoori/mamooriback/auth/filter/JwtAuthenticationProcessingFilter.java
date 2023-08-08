@@ -54,7 +54,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
         }
 
-        Optional<String> optionalAccessToken = jwtService.extractAccessToken(request)
+        Optional<String> optionalAccessToken = CookieUtil.getCookie(request, jwtService.getAccessHeader())
+                .map(Cookie::getValue)
                 .filter(jwtService::isTokenValid);
         if (optionalAccessToken.isPresent()) {
             // API 처리
@@ -86,7 +87,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                     tokenRepository.save(token);
 
                     // 응답값 설정
-                    jwtService.setAccessTokenHeader(response, reIssueAccessToken);
+                    jwtService.setAccessTokenCookie(response, reIssueAccessToken);
                     jwtService.setRefreshTokenCookie(response, reIssueRefreshToken);
 
                     filterChain.doFilter(request, response);

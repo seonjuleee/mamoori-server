@@ -114,6 +114,11 @@ public class JwtService {
         response.setHeader(accessHeader, BEARER + accessToken);
     }
 
+    public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
+        int cookieMaxAge = (int) (accessTokenExpirationPeriod / 1000);
+        CookieUtil.addCookie(response, accessHeader, accessToken, cookieMaxAge);
+    }
+
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         int cookieMaxAge = (int) (refreshTokenExpirationPeriod / 1000);
         CookieUtil.addCookie(response, refreshHeader, refreshToken, cookieMaxAge);
