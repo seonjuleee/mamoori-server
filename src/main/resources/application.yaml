@@ -50,3 +50,10 @@ logging:
   config: classpath:logback-spring.xml
 #server:
 #  port: 8081
+
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
