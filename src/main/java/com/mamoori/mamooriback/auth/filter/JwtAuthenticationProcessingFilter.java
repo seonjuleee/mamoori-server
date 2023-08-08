@@ -57,6 +57,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         log.debug("method : {}", request.getMethod());
         log.debug("uri : {}", request.getRequestURI());
         log.debug("host : {}", request.getRemoteHost());
+        if (request.getMethod().equals("OPTIONS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (NO_CHECK_URL.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response); // "/login" 요청이 들어오면, 다음 필터 호출
