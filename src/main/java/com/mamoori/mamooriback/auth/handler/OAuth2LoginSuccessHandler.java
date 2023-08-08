@@ -90,6 +90,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             jwtService.setAccessTokenCookie(response, accessToken);
             jwtService.setRefreshTokenCookie(response, refreshToken);
+            log.debug("redirect login...");
+            // redirect login
+            response.sendRedirect("https://mamoori.life/callback");
+            return;
         } catch (Exception e) {
             throw e;
         }
