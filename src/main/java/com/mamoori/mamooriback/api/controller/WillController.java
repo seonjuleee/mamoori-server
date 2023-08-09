@@ -4,7 +4,9 @@ import com.mamoori.mamooriback.api.dto.PageResponse;
 import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.service.WillService;
-import com.mamoori.mamooriback.auth.service.CustomOAuth2User;
+import com.mamoori.mamooriback.auth.service.JwtService;
+import com.mamoori.mamooriback.exception.BusinessException;
+import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @Slf4j
@@ -22,14 +25,24 @@ import org.springframework.web.bind.annotation.*;
 public class WillController {
 
     private final WillService willService;
+    private final JwtService jwtService;
 
     @GetMapping("/wills")
     public ResponseEntity<PageResponse<WillResponse>> getWills(
-            @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal,
+            HttpServletRequest request,
             @RequestParam(required = false, value = "keyword") String title,
             @PageableDefault(size=10, sort="updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
         log.debug("getWills called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
         log.debug("getWills -> email : {}", email);
 
         PageResponse<WillResponse> willResponsePage = willService.getWillListByEmail(email, title, pageable);
@@ -39,9 +52,18 @@ public class WillController {
 
     @GetMapping("/wills/{id}")
     public ResponseEntity<WillResponse> getWill(@PathVariable("id") Long willId,
-                                                @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+                                                HttpServletRequest request) {
         log.debug("getWill called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
         log.debug("getWill -> email : {}", email);
         WillResponse willResponse = willService.getWillById(email, willId);
 
@@ -51,9 +73,18 @@ public class WillController {
 
     @PutMapping("/wills")
     public ResponseEntity putWill(@RequestBody WillRequest willRequest,
-                                  @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+                                  HttpServletRequest request) {
         log.debug("putWill called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
         log.debug("putWill -> email : {}", email);
         willService.putWill(email, willRequest);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -61,9 +92,18 @@ public class WillController {
 
     @DeleteMapping("/wills/{id}")
     public ResponseEntity deleteWill(@PathVariable("id") Long willId,
-                                     @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+                                     HttpServletRequest request) {
         log.debug("deleteWill called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
         log.debug("deleteWill -> email : {}", email);
         willService.deleteWill(email, willId);
         return new ResponseEntity<>(HttpStatus.OK);
