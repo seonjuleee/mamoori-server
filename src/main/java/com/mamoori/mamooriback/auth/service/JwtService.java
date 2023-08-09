@@ -2,7 +2,11 @@ package com.mamoori.mamooriback.auth.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.mamoori.mamooriback.api.repository.UserRepository;
+import com.mamoori.mamooriback.api.entity.Token;
+import com.mamoori.mamooriback.api.repository.TokenRepository;
+import com.mamoori.mamooriback.auth.dto.TokenResponse;
+import com.mamoori.mamooriback.exception.BusinessException;
+import com.mamoori.mamooriback.exception.ErrorCode;
 import com.mamoori.mamooriback.util.CookieUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +44,7 @@ public class JwtService {
     // JWT Header에 들어오는 값 : 'Authorization(Key) = Bearer {token} (Value)' 형식
     private static final String BEARER = "Bearer ";
 
-    private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
     public String createAccessToken(String email) {
         // TODO LocalDateTime으로 변경하기
@@ -133,5 +137,26 @@ public class JwtService {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
             return false;
         }
+    }
+
+    public TokenResponse reissueAccessTokenByRefreshToken(String refreshToken) {
+        Token token = tokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()));
+        String reIssueAccessToken = createAccessToken(token.getUser().getEmail());
+        String reIssueRefreshToken = createRefreshToken();
+
+        log.debug("reIssueAccessToken : {}", reIssueAccessToken);
+        log.debug("reIssueRefreshToken : {}", reIssueRefreshToken);
+
+        // DB 저장
+        token.setAccessToken(reIssueAccessToken);
+        token.setRefreshToken(reIssueRefreshToken);
+        tokenRepository.save(token);
+
+        return TokenResponse.builder()
+                .accessToken(reIssueAccessToken)
+                .refreshToken(reIssueRefreshToken)
+                .build();
     }
 }
