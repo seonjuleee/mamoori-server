@@ -44,4 +44,24 @@ public class JwtController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/token")
+    public ResponseEntity deleteToken(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("deleteToken called...");
+
+        String refreshToken = CookieUtil.getCookie(request, jwtService.getRefreshHeader())
+                .map(Cookie::getValue)
+                .orElse((null));
+        log.debug("refreshToken : {}", refreshToken);
+
+        if (!jwtService.isTokenValid(refreshToken)) {
+            // 오류 처리
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN, ErrorCode.INVALID_REFRESH_TOKEN.getMessage());
+        }
+
+        jwtService.reissueAccessTokenByRefreshToken(refreshToken);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
