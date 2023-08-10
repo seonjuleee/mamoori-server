@@ -33,8 +33,8 @@ public class SecurityConfig {
                 .oauth2Login()
                 .successHandler(oAuth2LoginSuccessHandler)
 //                .failureHandler(oAuth2LoginFailureHandler)
-                .authorizationEndpoint().baseUri("/auth/signin/**").and() // 로그인 접근 URI
-                .redirectionEndpoint().baseUri("/auth/callback/**").and() // redirect URI
+                .authorizationEndpoint().baseUri("/auth/signin").and() // 로그인 접근 URI
+                .redirectionEndpoint().baseUri("/callback").and() // redirect URI
                 ;
 
         http.addFilter(corsConfig.corsFilter())
