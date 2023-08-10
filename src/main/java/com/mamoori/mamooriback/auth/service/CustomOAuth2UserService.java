@@ -48,6 +48,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getProviderId());
         log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getEmail());
         log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getName());
+        log.debug("oauthUserInfo.getProvider() : {} ", oauthUserInfo.getProfileImage());
 
         return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(Role.USER.getCode())),
@@ -55,6 +56,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(),
                 oauthUserInfo.getEmail(),
                 oauthUserInfo.getName(),
+                oauthUserInfo.getProfileImage(),
                 oauthUserInfo.getProvider(),
                 Role.USER
         );

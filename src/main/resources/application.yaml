@@ -26,6 +26,7 @@ spring:
             scope:
               - name
               - email
+              - profile_image
           google:
             client-id: ENC(tpqD/CXkruIDaDpOL4LW8PVVTlTUBjc0QoRlmWYWbFNbqQdtnfEwoj8Gw4tOVjnXRDwc2jz4I/gjj5T01RbTRb4q7jGVHw+4fG+MVarGIRa8daOXcEOrpQ==)
             client-secret: ENC(Ozwi6Xh88nVgMU9or0IeNIPIHmesUCZdwEZ+wBH6DjLbIsIGcDobMS5dMBFPATb5)
