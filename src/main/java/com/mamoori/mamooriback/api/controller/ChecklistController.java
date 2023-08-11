@@ -2,7 +2,7 @@ package com.mamoori.mamooriback.api.controller;
 
 import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
 import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
-import com.mamoori.mamooriback.api.dto.UserChecklistAnswerRequest;
+import com.mamoori.mamooriback.api.dto.ChecklistRequest;
 import com.mamoori.mamooriback.api.service.ChecklistService;
 import com.mamoori.mamooriback.auth.service.JwtService;
 import com.mamoori.mamooriback.exception.BusinessException;
@@ -58,8 +58,7 @@ public class ChecklistController {
 
     @PostMapping("/checklist")
     public ResponseEntity postChecklistAnswer(
-            @RequestBody List<UserChecklistAnswerRequest> userChecklistAnswerRequests,
-            HttpServletRequest request) {
+            @RequestBody List<ChecklistRequest> checklistRequests, HttpServletRequest request) {
         log.debug("postChecklistAnswer called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
@@ -74,7 +73,7 @@ public class ChecklistController {
 
         log.debug("postChecklistAnswer -> email : {}", email);
 
-        checklistService.putChecklistAnswer(email, userChecklistAnswerRequests);
+        checklistService.createChecklist(email, checklistRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

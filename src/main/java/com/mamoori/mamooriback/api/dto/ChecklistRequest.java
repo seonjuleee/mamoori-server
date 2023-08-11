@@ -6,13 +6,13 @@ import com.mamoori.mamooriback.api.entity.UserChecklistAnswer;
 import lombok.Getter;
 
 @Getter
-public class UserChecklistAnswerRequest {
-    private Long checklistId;
-    private Boolean answer;
+public class ChecklistRequest {
+    private Long id;
+    private Boolean isChecked;
 
     public UserChecklistAnswer toEntity(UserChecklist userChecklist, Checklist checklist) {
         return UserChecklistAnswer.builder()
-                .isCheck(this.answer)
+                .isCheck(this.isChecked)
                 .userChecklist(userChecklist)
                 .checklist(checklist)
                 .build();

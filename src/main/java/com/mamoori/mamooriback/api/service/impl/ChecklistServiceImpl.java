@@ -2,7 +2,7 @@ package com.mamoori.mamooriback.api.service.impl;
 
 import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
 import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
-import com.mamoori.mamooriback.api.dto.UserChecklistAnswerRequest;
+import com.mamoori.mamooriback.api.dto.ChecklistRequest;
 import com.mamoori.mamooriback.api.dto.UserChecklistAnswerResponse;
 import com.mamoori.mamooriback.api.entity.Checklist;
 import com.mamoori.mamooriback.api.entity.User;
@@ -47,18 +47,18 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Transactional
     @Override
-    public void putChecklistAnswer(String email, List<UserChecklistAnswerRequest> userChecklistAnswerRequests) {
+    public void createChecklist(String email, List<ChecklistRequest> checklistRequests) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
         UserChecklist saveUserChecklist = userChecklistRepository.save(new UserChecklist(user));
-        log.debug("putChecklistAnswer -> userChecklistId : {}", saveUserChecklist.getUserChecklistId());
+        log.debug("createChecklist -> userChecklistId : {}", saveUserChecklist.getUserChecklistId());
 
-        for (UserChecklistAnswerRequest answer : userChecklistAnswerRequests) {
-            Checklist findChecklist = checklistRepository.findById(answer.getChecklistId()).get();
-            log.debug("putChecklistAnswer -> findChecklist : {}", findChecklist.getChecklistId());
-            UserChecklistAnswer saveAnswer = userChecklistAnswerRepository.save(answer.toEntity(saveUserChecklist, findChecklist));
-            log.debug("putChecklistAnswer -> saveAnswer : {}", saveAnswer.getAnswerId());
+        for (ChecklistRequest checklistRequest : checklistRequests) {
+            Checklist findChecklist = checklistRepository.findById(checklistRequest.getId()).get();
+            log.debug("createChecklist -> findChecklist : {}", findChecklist.getChecklistId());
+            UserChecklistAnswer saveAnswer = userChecklistAnswerRepository.save(checklistRequest.toEntity(saveUserChecklist, findChecklist));
+            log.debug("createChecklist -> saveAnswer : {}", saveAnswer.getAnswerId());
         }
     }
 
