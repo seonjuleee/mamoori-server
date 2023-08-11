@@ -56,11 +56,11 @@ public class ChecklistController {
                 .body(checklistAnswerResponse);
     }
 
-    @PutMapping("/checklist/answers")
-    public ResponseEntity putChecklistAnswer(
+    @PostMapping("/checklist")
+    public ResponseEntity postChecklistAnswer(
             @RequestBody List<UserChecklistAnswerRequest> userChecklistAnswerRequests,
             HttpServletRequest request) {
-        log.debug("putChecklistAnswer called...");
+        log.debug("postChecklistAnswer called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .orElseThrow(() -> new BusinessException(
@@ -72,7 +72,7 @@ public class ChecklistController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
 
-        log.debug("putChecklistAnswer -> email : {}", email);
+        log.debug("postChecklistAnswer -> email : {}", email);
 
         checklistService.putChecklistAnswer(email, userChecklistAnswerRequests);
         return new ResponseEntity<>(HttpStatus.OK);
