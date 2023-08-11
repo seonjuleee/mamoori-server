@@ -1,9 +1,9 @@
 package com.mamoori.mamooriback.api.repository;
 
-import com.mamoori.mamooriback.api.dto.ChecklistResponse;
+import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
 
 import java.util.List;
 
 public interface ChecklistRepositoryCustom {
-    List<ChecklistResponse> getChecklistItems();
+    List<ChecklistTaskResponse> getChecklistTasks();
 }

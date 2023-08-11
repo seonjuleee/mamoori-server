@@ -1,7 +1,7 @@
 package com.mamoori.mamooriback.api.controller;
 
 import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistResponse;
+import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
 import com.mamoori.mamooriback.api.dto.UserChecklistAnswerRequest;
 import com.mamoori.mamooriback.api.service.ChecklistService;
 import com.mamoori.mamooriback.auth.service.JwtService;
@@ -25,11 +25,11 @@ public class ChecklistController {
     private final ChecklistService checklistService;
     private final JwtService jwtService;
 
-    @GetMapping("/checklist/items")
-    public ResponseEntity<List<ChecklistResponse>> getChecklistItems() {
-        log.debug("getChecklistItems called...");
+    @GetMapping("/checklist/tasks")
+    public ResponseEntity<List<ChecklistTaskResponse>> getChecklistTasks() {
+        log.debug("getChecklistTasks called...");
 
-        List<ChecklistResponse> checklistItems = checklistService.getChecklistItems();
+        List<ChecklistTaskResponse> checklistItems = checklistService.getChecklistTasks();
         return ResponseEntity.ok()
                 .body(checklistItems);
     }
