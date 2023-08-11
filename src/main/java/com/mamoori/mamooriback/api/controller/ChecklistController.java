@@ -78,7 +78,7 @@ public class ChecklistController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/checklist/answers/{id}")
+    @DeleteMapping("/checklist/{id}")
     public ResponseEntity deleteChecklist(
             @PathVariable("id") Long userChecklistId,
             HttpServletRequest request) {
