@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ChecklistService {
     List<ChecklistTaskResponse> getChecklistTasks();
+    ChecklistResponse getChecklistByEmailAndUserChecklistId(String email, Long userChecklistId);
     @Transactional
     void createChecklist(String email, List<ChecklistRequest> checklistRequests);
     void deleteUserChecklist(String email, Long userChecklistId);

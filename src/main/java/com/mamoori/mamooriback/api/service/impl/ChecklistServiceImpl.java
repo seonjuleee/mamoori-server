@@ -33,6 +33,30 @@ public class ChecklistServiceImpl implements ChecklistService {
         return checklistRepository.getChecklistTasks();
     }
 
+    @Override
+    public ChecklistResponse getChecklistByEmailAndUserChecklistId(String email, Long userChecklistId) {
+        UserChecklist userChecklist = userChecklistRepository.findById(userChecklistId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.INVALID_REQUEST, ErrorCode.INVALID_REQUEST.getMessage()
+                ));
+
+        if (!email.equals(userChecklist.getUser().getEmail())){
+            throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+        }
+
+        Long totalTaskCount = userChecklistRepository.getTotalTaskCount(userChecklistId);
+        Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(userChecklistId);
+
+        List<ChecklistDto> checklist = userChecklistRepository.getChecklist(userChecklistId);
+
+        return ChecklistResponse.builder()
+                .id(userChecklist.getUserChecklistId())
+                .totalTaskCount(totalTaskCount)
+                .checkedTaskCount(checkedTaskCount)
+                .createdAt(userChecklist.getCreateAt())
+                .checklist(checklist)
+                .build();
+    }
 
     @Transactional
     @Override

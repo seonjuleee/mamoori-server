@@ -18,4 +18,39 @@ public class UserChecklistRepositoryImpl implements UserChecklistRepositoryCusto
     public UserChecklistRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
+
+    @Override
+    public List<ChecklistDto> getChecklist(Long userChecklistId) {
+        return queryFactory
+                .select(new QChecklistDto(userChecklistAnswer.checklist.checklistId,
+                        userChecklistAnswer.isCheck,
+                        userChecklistAnswer.checklist.description))
+                .from(userChecklist)
+                .join(userChecklist.userChecklistAnswers, userChecklistAnswer)
+                .where(userChecklist.userChecklistId.eq(userChecklistId))
+                .orderBy(userChecklistAnswer.checklist.order.asc())
+                .fetch();
+    }
+
+    @Override
+    public Long getTotalTaskCount(Long userChecklistId) {
+        return queryFactory
+                .select(userChecklistAnswer.answerId.count())
+                .from(userChecklist)
+                .join(userChecklist.userChecklistAnswers, userChecklistAnswer)
+                .where(userChecklist.userChecklistId.eq(userChecklistId))
+                .fetchOne();
+    }
+
+    @Override
+    public Long getCheckedTaskCount(Long userChecklistId) {
+        return queryFactory
+                .select(userChecklistAnswer.answerId.count())
+                .from(userChecklist)
+                .join(userChecklist.userChecklistAnswers, userChecklistAnswer)
+                .where(userChecklist.userChecklistId.eq(userChecklistId)
+                        .and(userChecklistAnswer.isCheck.eq(true)))
+                .fetchOne();
+    }
+
 }

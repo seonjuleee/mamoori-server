@@ -32,6 +32,30 @@ public class ChecklistController {
                 .body(checklistItems);
     }
 
+    @GetMapping("/checklist/{id}")
+    public ResponseEntity<ChecklistResponse> getChecklist(
+            HttpServletRequest request,
+            @PathVariable("id") Long userChecklistId) {
+        log.debug("getChecklist called...");
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        log.debug("getChecklist -> email : {}", email);
+
+        ChecklistResponse checklistResponse = checklistService.getChecklistByEmailAndUserChecklistId(email, userChecklistId);
+
+        return ResponseEntity.ok()
+                .body(checklistResponse);
+    }
+
     @PostMapping("/checklist")
     public ResponseEntity postChecklistAnswer(
             @RequestBody List<ChecklistRequest> checklistRequests, HttpServletRequest request) {
