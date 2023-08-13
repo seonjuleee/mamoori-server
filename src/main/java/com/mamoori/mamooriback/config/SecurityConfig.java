@@ -26,6 +26,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .formLogin().disable()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/css/**", "/images/**", "/js/**", "/auth/**", "/api/**", "/login", "/callback").permitAll() // 접근 권한 설정
                 .anyRequest().authenticated().and()
