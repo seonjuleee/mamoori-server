@@ -1,8 +1,6 @@
 package com.mamoori.mamooriback.api.controller;
 
-import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistRequest;
+import com.mamoori.mamooriback.api.dto.*;
 import com.mamoori.mamooriback.api.service.ChecklistService;
 import com.mamoori.mamooriback.auth.service.JwtService;
 import com.mamoori.mamooriback.exception.BusinessException;
@@ -32,28 +30,6 @@ public class ChecklistController {
         List<ChecklistTaskResponse> checklistItems = checklistService.getChecklistTasks();
         return ResponseEntity.ok()
                 .body(checklistItems);
-    }
-
-    @GetMapping("/checklist/last-answer")
-    public ResponseEntity<ChecklistAnswerResponse> getChecklistAnswer(
-            HttpServletRequest request) {
-        log.debug("getChecklistAnswer called...");
-        String accessToken = jwtService.extractAccessToken(request)
-                .filter(jwtService::isTokenValid)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
-                ));
-
-        String email = jwtService.extractEmailByAccessToken(accessToken)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
-                ));
-
-        log.debug("getChecklistAnswer -> email : {}", email);
-
-        ChecklistAnswerResponse checklistAnswerResponse = checklistService.getChecklistLastAnswerByEmail(email);
-        return ResponseEntity.ok()
-                .body(checklistAnswerResponse);
     }
 
     @PostMapping("/checklist")

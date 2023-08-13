@@ -1,9 +1,6 @@
 package com.mamoori.mamooriback.api.service.impl;
 
-import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistRequest;
-import com.mamoori.mamooriback.api.dto.UserChecklistAnswerResponse;
+import com.mamoori.mamooriback.api.dto.*;
 import com.mamoori.mamooriback.api.entity.Checklist;
 import com.mamoori.mamooriback.api.entity.User;
 import com.mamoori.mamooriback.api.entity.UserChecklist;
@@ -36,14 +33,6 @@ public class ChecklistServiceImpl implements ChecklistService {
         return checklistRepository.getChecklistTasks();
     }
 
-    @Override
-    public ChecklistAnswerResponse getChecklistLastAnswerByEmail(String email) {
-        ChecklistAnswerResponse checklistAnswer = userChecklistRepository.findLastChecklistAnswerByEmail(email);
-        log.debug("checklistAnswer : {}", checklistAnswer);
-        List<UserChecklistAnswerResponse> userChecklist = userChecklistRepository.findUserChecklistAnswersByUserChecklistId(checklistAnswer.getUserChecklistId());
-        checklistAnswer.setContent(userChecklist);
-        return checklistAnswer;
-    }
 
     @Transactional
     @Override

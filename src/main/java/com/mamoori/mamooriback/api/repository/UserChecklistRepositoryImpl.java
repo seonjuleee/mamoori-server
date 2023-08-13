@@ -18,27 +18,4 @@ public class UserChecklistRepositoryImpl implements UserChecklistRepositoryCusto
     public UserChecklistRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
-
-    @Override
-    public ChecklistAnswerResponse findLastChecklistAnswerByEmail(String email) {
-        return queryFactory
-                .select(new QChecklistAnswerResponse(
-                        userChecklist.userChecklistId,
-                        userChecklist.createAt
-                ))
-                .from(userChecklist)
-                .where(userChecklist.user.email.eq(email))
-                .orderBy(userChecklist.createAt.desc())
-                .limit(1)
-                .fetchOne();
-    }
-
-    @Override
-    public List<UserChecklistAnswerResponse> findUserChecklistAnswersByUserChecklistId(Long userChecklistId) {
-        return queryFactory
-                .select(new QUserChecklistAnswerResponse(userChecklistAnswer.checklist.checklistId, userChecklistAnswer.isCheck))
-                .from(userChecklistAnswer)
-                .where(userChecklistAnswer.userChecklist.userChecklistId.eq(userChecklistId))
-                .fetch();
-    }
 }
