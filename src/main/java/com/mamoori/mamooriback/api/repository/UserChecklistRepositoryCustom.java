@@ -12,4 +12,5 @@ public interface UserChecklistRepositoryCustom {
     List<ChecklistDto> getChecklist(Long userChecklistId);
     Long getTotalTaskCount(Long userChecklistId);
     Long getCheckedTaskCount(Long userChecklistId);
+    LocalDateTime findLastChecklistAnswerByEmail(String email);
 }

@@ -24,6 +24,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(2001, HttpStatus.FORBIDDEN, "회원 정보를 찾을 수 없습니다."),
     USER_ALREADY_EXISTS(2002, HttpStatus.BAD_REQUEST, "회원이 이미 존재합니다."),
 
+    // Checklist
+    CHECKLIST_ALREADY_EXISTS_FOR_TODAY(3001, HttpStatus.BAD_REQUEST, "오늘 작성한 체크리스트가 존재합니다.")
     ;
 
     private final int code;

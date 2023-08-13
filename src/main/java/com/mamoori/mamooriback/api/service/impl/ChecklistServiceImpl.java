@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -81,6 +83,12 @@ public class ChecklistServiceImpl implements ChecklistService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+        LocalDateTime lastChecklistDateTime = userChecklistRepository.findLastChecklistAnswerByEmail(email);
+
+        if (isTodayDate(lastChecklistDateTime)) {
+            throw new BusinessException(ErrorCode.CHECKLIST_ALREADY_EXISTS_FOR_TODAY, ErrorCode.CHECKLIST_ALREADY_EXISTS_FOR_TODAY.getMessage());
+        }
+
         UserChecklist saveUserChecklist = userChecklistRepository.save(new UserChecklist(user));
         log.debug("createChecklist -> userChecklistId : {}", saveUserChecklist.getUserChecklistId());
 
@@ -99,5 +107,13 @@ public class ChecklistServiceImpl implements ChecklistService {
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()
                 ));
         userChecklistRepository.delete(userChecklist);
+    }
+
+    private boolean isTodayDate(LocalDateTime localDateTime) {
+        if (localDateTime.toLocalDate().isEqual(LocalDate.now())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

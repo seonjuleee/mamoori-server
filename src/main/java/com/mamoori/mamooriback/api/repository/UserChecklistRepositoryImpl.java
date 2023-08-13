@@ -86,6 +86,7 @@ public class UserChecklistRepositoryImpl implements UserChecklistRepositoryCusto
                 .fetchOne();
     }
 
+    @Override
     public LocalDateTime findLastChecklistAnswerByEmail(String email) {
         return queryFactory
                 .select(userChecklist.createAt)
