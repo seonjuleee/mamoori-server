@@ -3,9 +3,11 @@ package com.mamoori.mamooriback.api.repository;
 import com.mamoori.mamooriback.api.dto.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.mamoori.mamooriback.api.entity.QUserChecklist.userChecklist;
@@ -50,6 +52,47 @@ public class UserChecklistRepositoryImpl implements UserChecklistRepositoryCusto
                 .join(userChecklist.userChecklistAnswers, userChecklistAnswer)
                 .where(userChecklist.userChecklistId.eq(userChecklistId)
                         .and(userChecklistAnswer.isCheck.eq(true)))
+                .fetchOne();
+    }
+
+    @Override
+    public ChecklistPageResponse getChecklistPage(String email, Pageable pageable) {
+        List<ChecklistResponse> result = queryFactory
+                .select(new QChecklistResponse(
+                        userChecklist.userChecklistId,
+                        userChecklist.createAt
+                ))
+                .from(userChecklist)
+                .where(userChecklist.user.email.eq(email))
+                .orderBy(userChecklist.createAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new ChecklistPageResponse(
+                getCount(email),
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                result,
+                findLastChecklistAnswerByEmail(email)
+        );
+    }
+
+    public Long getCount(String email) {
+        return queryFactory
+                .select(userChecklist.count())
+                .from(userChecklist)
+                .where(userChecklist.user.email.eq(email))
+                .fetchOne();
+    }
+
+    public LocalDateTime findLastChecklistAnswerByEmail(String email) {
+        return queryFactory
+                .select(userChecklist.createAt)
+                .from(userChecklist)
+                .where(userChecklist.user.email.eq(email))
+                .orderBy(userChecklist.createAt.desc())
+                .limit(1)
                 .fetchOne();
     }
 

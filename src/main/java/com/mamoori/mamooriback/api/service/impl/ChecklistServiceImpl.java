@@ -14,6 +14,7 @@ import com.mamoori.mamooriback.exception.BusinessException;
 import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,22 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Override
     public List<ChecklistTaskResponse> getChecklistTasks() {
         return checklistRepository.getChecklistTasks();
+    }
+
+    @Override
+    public ChecklistPageResponse getChecklists(String email, Pageable pageable) {
+        ChecklistPageResponse checklistPage = userChecklistRepository.getChecklistPage(email, pageable);
+        for (ChecklistResponse checklist : checklistPage.getChecklists()) {
+            Long totalTaskCount = userChecklistRepository.getTotalTaskCount(checklist.getId());
+            Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(checklist.getId());
+            List<ChecklistDto> dto = userChecklistRepository.getChecklist(checklist.getId());
+            checklist.setTotalTaskCount(totalTaskCount);
+            checklist.setCheckedTaskCount(checkedTaskCount);
+            checklist.setChecklist(dto);
+        }
+
+        log.debug("checklists : {}", checklistPage);
+        return checklistPage;
     }
 
     @Override

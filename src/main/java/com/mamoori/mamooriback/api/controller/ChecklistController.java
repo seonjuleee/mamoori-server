@@ -7,6 +7,9 @@ import com.mamoori.mamooriback.exception.BusinessException;
 import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +34,31 @@ public class ChecklistController {
         return ResponseEntity.ok()
                 .body(checklistItems);
     }
+
+    @GetMapping("/checklist")
+    public ResponseEntity<ChecklistPageResponse> getChecklists(
+            HttpServletRequest request,
+            @PageableDefault(size=10, sort="createAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.debug("getChecklists called...");
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        log.debug("getChecklists -> email : {}", email);
+
+        ChecklistPageResponse checklists = checklistService.getChecklists(email, pageable);
+
+        return ResponseEntity.ok()
+                .body(checklists);
+    }
+
 
     @GetMapping("/checklist/{id}")
     public ResponseEntity<ChecklistResponse> getChecklist(
