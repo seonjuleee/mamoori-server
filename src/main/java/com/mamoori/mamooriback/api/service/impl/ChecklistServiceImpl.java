@@ -80,12 +80,15 @@ public class ChecklistServiceImpl implements ChecklistService {
     @Transactional
     @Override
     public void createChecklist(String email, List<ChecklistRequest> checklistRequests) {
+        log.debug("createChecklist called...");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+        log.debug("user : {}", user.getEmail());
         LocalDateTime lastChecklistDateTime = userChecklistRepository.findLastChecklistAnswerByEmail(email);
+        log.debug("lastChecklistDateTime : {}", lastChecklistDateTime);
 
-        if (isTodayDate(lastChecklistDateTime)) {
+        if (lastChecklistDateTime != null && isTodayDate(lastChecklistDateTime)) {
             throw new BusinessException(ErrorCode.CHECKLIST_ALREADY_EXISTS_FOR_TODAY, ErrorCode.CHECKLIST_ALREADY_EXISTS_FOR_TODAY.getMessage());
         }
 
@@ -115,5 +118,14 @@ public class ChecklistServiceImpl implements ChecklistService {
         } else {
             return false;
         }
+    }
+
+    private boolean contains(List<ChecklistRequest> requests, Long taskId) {
+        for (ChecklistRequest checklistRequest : requests) {
+            if (taskId == checklistRequest.getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
