@@ -139,6 +139,27 @@ public class JwtService {
         }
     }
 
+    public TokenResponse reissueAccessTokenByAccessToken(String accessToken) {
+        Token token = tokenRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()));
+        String reIssueAccessToken = createAccessToken(token.getUser().getEmail());
+        String reIssueRefreshToken = createRefreshToken();
+
+        log.debug("reIssueAccessToken : {}", reIssueAccessToken);
+        log.debug("reIssueRefreshToken : {}", reIssueRefreshToken);
+
+        // DB 저장
+        token.setAccessToken(reIssueAccessToken);
+        token.setRefreshToken(reIssueRefreshToken);
+        tokenRepository.save(token);
+
+        return TokenResponse.builder()
+                .accessToken(reIssueAccessToken)
+                .refreshToken(reIssueRefreshToken)
+                .build();
+    }
+
     public TokenResponse reissueAccessTokenByRefreshToken(String refreshToken) {
         Token token = tokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new BusinessException(

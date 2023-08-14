@@ -49,17 +49,17 @@ public class JwtController {
     public ResponseEntity deleteToken(HttpServletRequest request, HttpServletResponse response) {
         log.debug("deleteToken called...");
 
-        String refreshToken = CookieUtil.getCookie(request, jwtService.getRefreshHeader())
-                .map(Cookie::getValue)
-                .orElse((null));
-        log.debug("refreshToken : {}", refreshToken);
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
 
-        if (!jwtService.isTokenValid(refreshToken)) {
-            // 오류 처리
-            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN, ErrorCode.INVALID_REFRESH_TOKEN.getMessage());
-        }
 
-        jwtService.reissueAccessTokenByRefreshToken(refreshToken);
+        jwtService.reissueAccessTokenByAccessToken(accessToken);
+
+        CookieUtil.deleteCookie(request, response, jwtService.getRefreshHeader(), true);
+        CookieUtil.deleteCookie(request, response, jwtService.getAccessHeader(), false);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
