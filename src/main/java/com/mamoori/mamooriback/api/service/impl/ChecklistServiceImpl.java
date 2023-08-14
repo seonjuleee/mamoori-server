@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +95,16 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         UserChecklist saveUserChecklist = userChecklistRepository.save(new UserChecklist(user));
         log.debug("createChecklist -> userChecklistId : {}", saveUserChecklist.getUserChecklistId());
+
+        // 전체 체크리스트 항목 가져오기
+        List<Long> taskIds = getChecklistTasks().stream().map(task -> task.getId()).collect(Collectors.toList());
+
+        // checklistRequests에 isChecked가 false인 값 추가
+        for (Long taskId : taskIds) {
+            if (!contains(checklistRequests, taskId)) {
+                checklistRequests.add(new ChecklistRequest(taskId, false));
+            }
+        }
 
         for (ChecklistRequest checklistRequest : checklistRequests) {
             Checklist findChecklist = checklistRepository.findById(checklistRequest.getId()).get();

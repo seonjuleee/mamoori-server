@@ -17,4 +17,12 @@ public class ChecklistRequest {
                 .checklist(checklist)
                 .build();
     }
+
+    public ChecklistRequest() {
+    }
+
+    public ChecklistRequest(Long id, Boolean isChecked) {
+        this.id = id;
+        this.isChecked = isChecked;
+    }
 }
