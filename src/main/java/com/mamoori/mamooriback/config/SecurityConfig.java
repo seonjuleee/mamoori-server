@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/css/**", "/images/**", "/js/**", "/auth/**", "/api/**").permitAll() // 접근 권한 설정
+                .antMatchers("/", "/css/**", "/images/**", "/js/**", "/auth/**", "/api/**", "/login", "/callback").permitAll() // 접근 권한 설정
                 .anyRequest().authenticated().and()
 //                .logout().logoutSuccessUrl("/").and() // logout 성공시 URL
                 .oauth2Login()

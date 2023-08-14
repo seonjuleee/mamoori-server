@@ -21,13 +21,17 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 //@RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
-    private static final String NO_CHECK_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
+    private static final List<String> NO_CHECK_URL = Arrays.asList(new String[] {
+            "/login", "/checklist/items", "/callback"
+    }); // "/login"으로 들어오는 요청은 Filter 작동 X
 
     @Autowired
     private JwtService jwtService;
@@ -49,12 +53,22 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      * */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals(NO_CHECK_URL)) {
+        log.debug("doFilterInternal called...");
+        log.debug("method : {}", request.getMethod());
+        log.debug("uri : {}", request.getRequestURI());
+        log.debug("host : {}", request.getRemoteHost());
+        if (request.getMethod().equals("OPTIONS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (NO_CHECK_URL.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response); // "/login" 요청이 들어오면, 다음 필터 호출
             return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
         }
 
-        Optional<String> optionalAccessToken = jwtService.extractAccessToken(request)
+        Optional<String> optionalAccessToken = CookieUtil.getCookie(request, jwtService.getAccessHeader())
+                .map(Cookie::getValue)
                 .filter(jwtService::isTokenValid);
         if (optionalAccessToken.isPresent()) {
             // API 처리
@@ -86,7 +100,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                     tokenRepository.save(token);
 
                     // 응답값 설정
-                    jwtService.setAccessTokenHeader(response, reIssueAccessToken);
+                    jwtService.setAccessTokenCookie(response, reIssueAccessToken);
                     jwtService.setRefreshTokenCookie(response, reIssueRefreshToken);
 
                     filterChain.doFilter(request, response);
@@ -105,9 +119,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 //                // 로그인 종료
 //                CookieUtil.deleteCookie(request, response, jwtService.getRefreshHeader());
 //                // redirect login
-                response.sendRedirect("/login"); // TODO 수정하기
+//                response.sendRedirect("https://mamoori.life/login"); // TODO 수정하기
             }
-            filterChain.doFilter(request, response);
+//            filterChain.doFilter(request, response);
         }
     }
 }
