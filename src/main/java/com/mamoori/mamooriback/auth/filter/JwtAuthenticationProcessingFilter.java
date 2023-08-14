@@ -30,7 +30,7 @@ import java.util.Optional;
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private static final List<String> NO_CHECK_URL = Arrays.asList(new String[] {
-            "/login", "/checklist/items", "/callback"
+            "/login", "/checklist/items", "/callback", "/api/token"
     }); // "/login"으로 들어오는 요청은 Filter 작동 X
 
     @Autowired
@@ -67,8 +67,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
         }
 
-        Optional<String> optionalAccessToken = CookieUtil.getCookie(request, jwtService.getAccessHeader())
-                .map(Cookie::getValue)
+        Optional<String> optionalAccessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid);
         if (optionalAccessToken.isPresent()) {
             // API 처리
@@ -77,51 +76,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         } else {
-            // access token 재발급
-            String refreshToken = CookieUtil.getCookie(request, jwtService.getRefreshHeader())
-                    .map(Cookie::getValue)
-                    .orElse((null));
-            log.debug("refreshToken : {}", refreshToken);
-
-            if (jwtService.isTokenValid(refreshToken)) {
-                // 재발급
-                Optional<Token> optionalToken = tokenRepository.findByRefreshToken(refreshToken);
-                if (optionalToken.isPresent()) {
-                    Token token = optionalToken.get();
-                    log.debug("token : {}, {}", token.getAccessToken(), token.getRefreshToken());
-                    String reIssueAccessToken = jwtService.createAccessToken(token.getUser().getEmail());
-                    String reIssueRefreshToken = jwtService.createRefreshToken();
-
-                    log.debug("token : {}, {}", reIssueAccessToken, reIssueRefreshToken);
-
-                    // DB 저장
-                    token.setAccessToken(reIssueAccessToken);
-                    token.setRefreshToken(reIssueRefreshToken);
-                    tokenRepository.save(token);
-
-                    // 응답값 설정
-                    jwtService.setAccessTokenCookie(response, reIssueAccessToken);
-                    jwtService.setRefreshTokenCookie(response, reIssueRefreshToken);
-
-                    filterChain.doFilter(request, response);
-                    return;
-                } else {
-                    // error handling
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.setCharacterEncoding("UTF-8");
-                    ErrorResponse errorResponse = new ErrorResponse(ErrorCode.UNAUTHORIZED);
-                    response.getWriter().write(new Gson().toJson(errorResponse));
-                    return;
-                }
-            } else {
-                log.debug("redirect login");
-//                // 로그인 종료
-//                CookieUtil.deleteCookie(request, response, jwtService.getRefreshHeader());
-//                // redirect login
-//                response.sendRedirect("https://mamoori.life/login"); // TODO 수정하기
-            }
-//            filterChain.doFilter(request, response);
+            // error handling
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_ACCESS_TOKEN);
+            response.getWriter().write(new Gson().toJson(errorResponse));
+            return;
         }
     }
 }
