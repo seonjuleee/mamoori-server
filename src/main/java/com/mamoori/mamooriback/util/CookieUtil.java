@@ -22,17 +22,17 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge, boolean isHttpOnly) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-//        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(isHttpOnly);
         cookie.setDomain("mamoori.life");
         cookie.setMaxAge(maxAge);
 
         response.addCookie(cookie);
     }
 
-    public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+    public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name, boolean isHttpOnly) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null && cookies.length > 0) {
@@ -40,6 +40,7 @@ public class CookieUtil {
                 if (name.equals(cookie.getName())) {
                     cookie.setValue("");
                     cookie.setPath("/");
+                    cookie.setHttpOnly(isHttpOnly);
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
                 }
