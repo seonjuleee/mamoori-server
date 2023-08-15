@@ -1,6 +1,6 @@
 package com.mamoori.mamooriback.api.controller;
 
-import com.mamoori.mamooriback.api.dto.PageResponse;
+import com.mamoori.mamooriback.api.dto.WillPageResponse;
 import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.service.WillService;
@@ -28,7 +28,7 @@ public class WillController {
     private final JwtService jwtService;
 
     @GetMapping("/will")
-    public ResponseEntity<PageResponse<WillResponse>> getWills(
+    public ResponseEntity<WillPageResponse> getWills(
             HttpServletRequest request,
             @RequestParam(required = false, value = "keyword") String title,
             @PageableDefault(size=10, sort="updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -45,7 +45,7 @@ public class WillController {
                 ));
         log.debug("getWills -> email : {}", email);
 
-        PageResponse<WillResponse> willResponsePage = willService.getWillListByEmail(email, title, pageable);
+        WillPageResponse willResponsePage = willService.getWillListByEmail(email, title, pageable);
         return ResponseEntity.ok()
                 .body(willResponsePage);
     }

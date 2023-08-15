@@ -1,6 +1,6 @@
 package com.mamoori.mamooriback.api.service.impl;
 
-import com.mamoori.mamooriback.api.dto.PageResponse;
+import com.mamoori.mamooriback.api.dto.WillPageResponse;
 import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.entity.User;
@@ -25,9 +25,15 @@ public class WillServiceImpl implements WillService {
     private final UserRepository userRepository;
 
     @Override
-    public PageResponse<WillResponse> getWillListByEmail(String email, String title, Pageable pageable) {
+    public WillPageResponse getWillListByEmail(String email, String title, Pageable pageable) {
         Page<WillResponse> search = willRepository.search(email, title, pageable);
-        return new PageResponse<>(search.getContent(), (int) search.getTotalElements(), search.getSize(), search.getNumber());
+
+        return WillPageResponse.builder()
+                .wills(search.getContent())
+                .totalWillCount(search.getTotalElements())
+                .size(search.getSize())
+                .page(search.getNumber())
+                .build();
     }
 
     @Override
