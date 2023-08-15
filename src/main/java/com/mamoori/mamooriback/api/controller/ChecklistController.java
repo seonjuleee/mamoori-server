@@ -126,4 +126,26 @@ public class ChecklistController {
         checklistService.deleteUserChecklist(email, userChecklistId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/checklist/today")
+    public ResponseEntity<ChecklistTodayResponse> getChecklistToday(HttpServletRequest request) {
+        log.debug("getChecklistToday called...");
+
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        log.debug("getChecklistToday -> email : {}", email);
+
+        ChecklistTodayResponse checklistToday = checklistService.getChecklistToday(email);
+        return ResponseEntity.ok()
+                .body(checklistToday);
+    }
 }
