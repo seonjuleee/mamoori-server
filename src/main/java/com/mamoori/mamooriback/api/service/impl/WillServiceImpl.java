@@ -39,7 +39,7 @@ public class WillServiceImpl implements WillService {
     }
 
     @Override
-    public void putWill(String email, WillRequest willRequest) {
+    public void postWill(String email, WillRequest willRequest) {
         if (willRequest.getWillId() == null) {
             // create
             User user = userRepository.findByEmail(email)

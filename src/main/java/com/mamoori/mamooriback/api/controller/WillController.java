@@ -27,7 +27,7 @@ public class WillController {
     private final WillService willService;
     private final JwtService jwtService;
 
-    @GetMapping("/wills")
+    @GetMapping("/will")
     public ResponseEntity<PageResponse<WillResponse>> getWills(
             HttpServletRequest request,
             @RequestParam(required = false, value = "keyword") String title,
@@ -50,7 +50,7 @@ public class WillController {
                 .body(willResponsePage);
     }
 
-    @GetMapping("/wills/{id}")
+    @GetMapping("/will/{id}")
     public ResponseEntity<WillResponse> getWill(@PathVariable("id") Long willId,
                                                 HttpServletRequest request) {
         log.debug("getWill called...");
@@ -71,10 +71,10 @@ public class WillController {
                 .body(willResponse);
     }
 
-    @PutMapping("/wills")
-    public ResponseEntity putWill(@RequestBody WillRequest willRequest,
-                                  HttpServletRequest request) {
-        log.debug("putWill called...");
+    @PostMapping("/will")
+    public ResponseEntity postWill(@RequestBody WillRequest willRequest,
+                                   HttpServletRequest request) {
+        log.debug("postWill called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .orElseThrow(() -> new BusinessException(
@@ -85,12 +85,12 @@ public class WillController {
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
-        log.debug("putWill -> email : {}", email);
-        willService.putWill(email, willRequest);
+        log.debug("postWill -> email : {}", email);
+        willService.postWill(email, willRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/wills/{id}")
+    @DeleteMapping("/will/{id}")
     public ResponseEntity deleteWill(@PathVariable("id") Long willId,
                                      HttpServletRequest request) {
         log.debug("deleteWill called...");
