@@ -41,6 +41,15 @@ public class NaverOauthUserInfo implements OauthUserInfo {
         return (String) response.get("name");
     }
 
+    @Override
+    public String getProfileImage() {
+        Map<String, Object> response = getResponse();
+        if (response == null) {
+            return null;
+        }
+        return (String) response.get("profile_image");
+    }
+
     private Map<String, Object> getResponse() {
         return (Map<String, Object>) attributes.get("response");
     }

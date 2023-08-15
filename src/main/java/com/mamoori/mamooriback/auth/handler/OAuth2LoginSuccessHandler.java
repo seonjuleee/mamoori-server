@@ -36,9 +36,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             String email = oAuth2User.getEmail();
             String name = oAuth2User.getName();
+            String image = oAuth2User.getProfileImage();
             Role role = oAuth2User.getRole();
 
             log.debug("oauth2User email : {}", oAuth2User.getEmail());
+            log.debug("oauth2User image : {}", oAuth2User.getProfileImage());
             log.debug("oauth2User role : {}", oAuth2User.getRole());
 
             // AccessToken, RefreshToken 발급
@@ -56,6 +58,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                         User.builder()
                                 .email(email)
                                 .name(name)
+                                .image(image)
                                 .role(role)
                                 .build()
                 );

@@ -41,6 +41,15 @@ public class GoogleOauthUserInfo implements OauthUserInfo {
         return (String) attributes.get("name");
     }
 
+    @Override
+    public String getProfileImage() {
+        Map<String, Object> response = getResponse();
+        if (response == null) {
+            return null;
+        }
+        return (String) attributes.get("picture");
+    }
+
     private Map<String, Object> getResponse() {
         return this.attributes;
     }
