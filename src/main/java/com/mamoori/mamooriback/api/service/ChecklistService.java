@@ -13,4 +13,6 @@ public interface ChecklistService {
     @Transactional
     void createChecklist(String email, List<ChecklistRequest> checklistRequests);
     void deleteUserChecklist(String email, Long userChecklistId);
+
+    ChecklistTodayResponse getChecklistToday(String email);
 }

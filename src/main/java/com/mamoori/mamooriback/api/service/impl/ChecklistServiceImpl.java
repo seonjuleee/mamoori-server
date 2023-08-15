@@ -135,6 +135,20 @@ public class ChecklistServiceImpl implements ChecklistService {
         userChecklistRepository.delete(userChecklist);
     }
 
+    @Override
+    public ChecklistTodayResponse getChecklistToday(String email) {
+        LocalDateTime lastChecklistDateTime = userChecklistRepository.findLastChecklistAnswerByEmail(email);
+        log.debug("lastChecklistDateTime : {}", lastChecklistDateTime);
+
+        boolean result = false;
+
+        if (lastChecklistDateTime != null && isTodayDate(lastChecklistDateTime)) {
+            result = true;
+        }
+
+        return new ChecklistTodayResponse(result);
+    }
+
     private boolean isTodayDate(LocalDateTime localDateTime) {
         if (localDateTime.toLocalDate().isEqual(LocalDate.now())) {
             return true;
