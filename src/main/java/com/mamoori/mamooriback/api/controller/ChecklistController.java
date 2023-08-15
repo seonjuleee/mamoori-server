@@ -1,14 +1,15 @@
 package com.mamoori.mamooriback.api.controller;
 
-import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistResponse;
-import com.mamoori.mamooriback.api.dto.UserChecklistAnswerRequest;
+import com.mamoori.mamooriback.api.dto.*;
 import com.mamoori.mamooriback.api.service.ChecklistService;
 import com.mamoori.mamooriback.auth.service.JwtService;
 import com.mamoori.mamooriback.exception.BusinessException;
 import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,19 +26,20 @@ public class ChecklistController {
     private final ChecklistService checklistService;
     private final JwtService jwtService;
 
-    @GetMapping("/checklist/items")
-    public ResponseEntity<List<ChecklistResponse>> getChecklistItems() {
-        log.debug("getChecklistItems called...");
+    @GetMapping("/checklist/tasks")
+    public ResponseEntity<List<ChecklistTaskResponse>> getChecklistTasks() {
+        log.debug("getChecklistTasks called...");
 
-        List<ChecklistResponse> checklistItems = checklistService.getChecklistItems();
+        List<ChecklistTaskResponse> checklistItems = checklistService.getChecklistTasks();
         return ResponseEntity.ok()
                 .body(checklistItems);
     }
 
-    @GetMapping("/checklist/last-answer")
-    public ResponseEntity<ChecklistAnswerResponse> getChecklistAnswer(
-            HttpServletRequest request) {
-        log.debug("getChecklistAnswer called...");
+    @GetMapping("/checklist")
+    public ResponseEntity<ChecklistPageResponse> getChecklists(
+            HttpServletRequest request,
+            @PageableDefault(size=10, sort="createAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.debug("getChecklists called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .orElseThrow(() -> new BusinessException(
@@ -49,18 +51,20 @@ public class ChecklistController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
 
-        log.debug("getChecklistAnswer -> email : {}", email);
+        log.debug("getChecklists -> email : {}", email);
 
-        ChecklistAnswerResponse checklistAnswerResponse = checklistService.getChecklistLastAnswerByEmail(email);
+        ChecklistPageResponse checklists = checklistService.getChecklists(email, pageable);
+
         return ResponseEntity.ok()
-                .body(checklistAnswerResponse);
+                .body(checklists);
     }
 
-    @PutMapping("/checklist/answers")
-    public ResponseEntity putChecklistAnswer(
-            @RequestBody List<UserChecklistAnswerRequest> userChecklistAnswerRequests,
-            HttpServletRequest request) {
-        log.debug("putChecklistAnswer called...");
+
+    @GetMapping("/checklist/{id}")
+    public ResponseEntity<ChecklistDetailResponse> getChecklist(
+            HttpServletRequest request,
+            @PathVariable("id") Long userChecklistId) {
+        log.debug("getChecklist called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
                 .orElseThrow(() -> new BusinessException(
@@ -72,13 +76,36 @@ public class ChecklistController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
 
-        log.debug("putChecklistAnswer -> email : {}", email);
+        log.debug("getChecklist -> email : {}", email);
 
-        checklistService.putChecklistAnswer(email, userChecklistAnswerRequests);
+        ChecklistDetailResponse checklistDetailResponse = checklistService.getChecklistByEmailAndUserChecklistId(email, userChecklistId);
+
+        return ResponseEntity.ok()
+                .body(checklistDetailResponse);
+    }
+
+    @PostMapping("/checklist")
+    public ResponseEntity postChecklistAnswer(
+            @RequestBody List<ChecklistRequest> checklistRequests, HttpServletRequest request) {
+        log.debug("postChecklistAnswer called...");
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        log.debug("postChecklistAnswer -> email : {}", email);
+
+        checklistService.createChecklist(email, checklistRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/checklist/answers/{id}")
+    @DeleteMapping("/checklist/{id}")
     public ResponseEntity deleteChecklist(
             @PathVariable("id") Long userChecklistId,
             HttpServletRequest request) {

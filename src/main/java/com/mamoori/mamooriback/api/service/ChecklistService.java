@@ -1,16 +1,16 @@
 package com.mamoori.mamooriback.api.service;
 
-import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
-import com.mamoori.mamooriback.api.dto.ChecklistResponse;
-import com.mamoori.mamooriback.api.dto.UserChecklistAnswerRequest;
+import com.mamoori.mamooriback.api.dto.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ChecklistService {
-    List<ChecklistResponse> getChecklistItems();
-    ChecklistAnswerResponse getChecklistLastAnswerByEmail(String email);
+    List<ChecklistTaskResponse> getChecklistTasks();
+    ChecklistPageResponse getChecklists(String email, Pageable pageable);
+    ChecklistDetailResponse getChecklistByEmailAndUserChecklistId(String email, Long userChecklistId);
     @Transactional
-    void putChecklistAnswer(String email, List<UserChecklistAnswerRequest> userChecklistAnswerRequestList);
+    void createChecklist(String email, List<ChecklistRequest> checklistRequests);
     void deleteUserChecklist(String email, Long userChecklistId);
 }

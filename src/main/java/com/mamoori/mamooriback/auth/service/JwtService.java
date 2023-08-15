@@ -120,12 +120,12 @@ public class JwtService {
 
     public void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
         int cookieMaxAge = (int) (accessTokenExpirationPeriod / 1000);
-        CookieUtil.addCookie(response, accessHeader, accessToken, cookieMaxAge);
+        CookieUtil.addCookie(response, accessHeader, accessToken, cookieMaxAge, false);
     }
 
     public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         int cookieMaxAge = (int) (refreshTokenExpirationPeriod / 1000);
-        CookieUtil.addCookie(response, refreshHeader, refreshToken, cookieMaxAge);
+        CookieUtil.addCookie(response, refreshHeader, refreshToken, cookieMaxAge, true);
     }
 
     public boolean isTokenValid(String token) {
@@ -137,6 +137,27 @@ public class JwtService {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
             return false;
         }
+    }
+
+    public TokenResponse reissueAccessTokenByAccessToken(String accessToken) {
+        Token token = tokenRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()));
+        String reIssueAccessToken = createAccessToken(token.getUser().getEmail());
+        String reIssueRefreshToken = createRefreshToken();
+
+        log.debug("reIssueAccessToken : {}", reIssueAccessToken);
+        log.debug("reIssueRefreshToken : {}", reIssueRefreshToken);
+
+        // DB 저장
+        token.setAccessToken(reIssueAccessToken);
+        token.setRefreshToken(reIssueRefreshToken);
+        tokenRepository.save(token);
+
+        return TokenResponse.builder()
+                .accessToken(reIssueAccessToken)
+                .refreshToken(reIssueRefreshToken)
+                .build();
     }
 
     public TokenResponse reissueAccessTokenByRefreshToken(String refreshToken) {

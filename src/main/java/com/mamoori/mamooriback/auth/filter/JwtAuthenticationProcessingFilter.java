@@ -30,7 +30,7 @@ import java.util.Optional;
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private static final List<String> NO_CHECK_URL = Arrays.asList(new String[] {
-            "/login", "/checklist/items", "/callback", "/api/token"
+            "/login", "/api/checklist/tasks", "/callback", "/api/token"
     }); // "/login"으로 들어오는 요청은 Filter 작동 X
 
     @Autowired

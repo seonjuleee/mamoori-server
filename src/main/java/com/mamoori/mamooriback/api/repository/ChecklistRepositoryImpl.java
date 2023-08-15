@@ -1,7 +1,7 @@
 package com.mamoori.mamooriback.api.repository;
 
-import com.mamoori.mamooriback.api.dto.ChecklistResponse;
-import com.mamoori.mamooriback.api.dto.QChecklistResponse;
+import com.mamoori.mamooriback.api.dto.ChecklistTaskResponse;
+import com.mamoori.mamooriback.api.dto.QChecklistTaskResponse;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -17,9 +17,9 @@ public class ChecklistRepositoryImpl implements ChecklistRepositoryCustom {
     }
 
     @Override
-    public List<ChecklistResponse> getChecklistItems() {
+    public List<ChecklistTaskResponse> getChecklistTasks() {
         return queryFactory
-                .select(new QChecklistResponse(
+                .select(new QChecklistTaskResponse(
                         checklist.checklistId,
                         checklist.description,
                         checklist.order
