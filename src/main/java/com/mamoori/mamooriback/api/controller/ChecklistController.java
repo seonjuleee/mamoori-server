@@ -4,14 +4,16 @@ import com.mamoori.mamooriback.api.dto.ChecklistAnswerResponse;
 import com.mamoori.mamooriback.api.dto.ChecklistResponse;
 import com.mamoori.mamooriback.api.dto.UserChecklistAnswerRequest;
 import com.mamoori.mamooriback.api.service.ChecklistService;
-import com.mamoori.mamooriback.auth.service.CustomOAuth2User;
+import com.mamoori.mamooriback.auth.service.JwtService;
+import com.mamoori.mamooriback.exception.BusinessException;
+import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -21,6 +23,7 @@ import java.util.List;
 public class ChecklistController {
 
     private final ChecklistService checklistService;
+    private final JwtService jwtService;
 
     @GetMapping("/checklist/items")
     public ResponseEntity<List<ChecklistResponse>> getChecklistItems() {
@@ -33,9 +36,19 @@ public class ChecklistController {
 
     @GetMapping("/checklist/last-answer")
     public ResponseEntity<ChecklistAnswerResponse> getChecklistAnswer(
-            @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+            HttpServletRequest request) {
         log.debug("getChecklistAnswer called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
         log.debug("getChecklistAnswer -> email : {}", email);
 
         ChecklistAnswerResponse checklistAnswerResponse = checklistService.getChecklistLastAnswerByEmail(email);
@@ -46,9 +59,19 @@ public class ChecklistController {
     @PutMapping("/checklist/answers")
     public ResponseEntity putChecklistAnswer(
             @RequestBody List<UserChecklistAnswerRequest> userChecklistAnswerRequests,
-            @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+            HttpServletRequest request) {
         log.debug("putChecklistAnswer called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
         log.debug("putChecklistAnswer -> email : {}", email);
 
         checklistService.putChecklistAnswer(email, userChecklistAnswerRequests);
@@ -58,9 +81,19 @@ public class ChecklistController {
     @DeleteMapping("/checklist/answers/{id}")
     public ResponseEntity deleteChecklist(
             @PathVariable("id") Long userChecklistId,
-            @AuthenticationPrincipal CustomOAuth2User oAuth2UserPrincipal) {
+            HttpServletRequest request) {
         log.debug("deleteChecklist called...");
-        String email = oAuth2UserPrincipal.getEmail();
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
         log.debug("deleteChecklist -> email : {}", email);
 
         checklistService.deleteUserChecklist(email, userChecklistId);
