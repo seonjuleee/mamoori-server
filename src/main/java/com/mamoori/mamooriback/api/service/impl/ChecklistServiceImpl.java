@@ -43,9 +43,11 @@ public class ChecklistServiceImpl implements ChecklistService {
         for (ChecklistResponse checklist : checklistPage.getChecklists()) {
             Long totalTaskCount = userChecklistRepository.getTotalTaskCount(checklist.getId());
             Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(checklist.getId());
+            Integer progress = roundRatioToFirstDigit(checkedTaskCount, totalTaskCount);
             List<ChecklistDto> dto = userChecklistRepository.getChecklist(checklist.getId());
             checklist.setTotalTaskCount(totalTaskCount);
             checklist.setCheckedTaskCount(checkedTaskCount);
+            checklist.setProgress(progress);
             checklist.setChecklist(dto);
         }
 
@@ -66,6 +68,7 @@ public class ChecklistServiceImpl implements ChecklistService {
 
         Long totalTaskCount = userChecklistRepository.getTotalTaskCount(userChecklistId);
         Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(userChecklistId);
+        Integer progress = roundRatioToFirstDigit(checkedTaskCount, totalTaskCount);
 
         List<ChecklistDto> checklist = userChecklistRepository.getChecklist(userChecklistId);
 
@@ -73,6 +76,7 @@ public class ChecklistServiceImpl implements ChecklistService {
                 .id(userChecklist.getUserChecklistId())
                 .totalTaskCount(totalTaskCount)
                 .checkedTaskCount(checkedTaskCount)
+                .progress(progress)
                 .createdAt(userChecklist.getCreateAt())
                 .checklist(checklist)
                 .build();
@@ -138,5 +142,9 @@ public class ChecklistServiceImpl implements ChecklistService {
             }
         }
         return false;
+    }
+
+    private int roundRatioToFirstDigit(long num1, long num2) {
+        return (int) Math.round(num1 * 1000 / num2 / 10.0);
     }
 }

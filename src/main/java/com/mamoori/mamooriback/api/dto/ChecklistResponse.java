@@ -18,6 +18,7 @@ public class ChecklistResponse {
     private Long id;
     private Long checkedTaskCount;
     private Long totalTaskCount;
+    private Integer progress;
 
     private List<ChecklistDto> checklist;
 
