@@ -1,6 +1,6 @@
 package com.mamoori.mamooriback.api.controller;
 
-import com.mamoori.mamooriback.api.dto.PageResponse;
+import com.mamoori.mamooriback.api.dto.WillPageResponse;
 import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.service.WillService;
@@ -27,8 +27,8 @@ public class WillController {
     private final WillService willService;
     private final JwtService jwtService;
 
-    @GetMapping("/wills")
-    public ResponseEntity<PageResponse<WillResponse>> getWills(
+    @GetMapping("/will")
+    public ResponseEntity<WillPageResponse> getWills(
             HttpServletRequest request,
             @RequestParam(required = false, value = "keyword") String title,
             @PageableDefault(size=10, sort="updateAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -45,12 +45,12 @@ public class WillController {
                 ));
         log.debug("getWills -> email : {}", email);
 
-        PageResponse<WillResponse> willResponsePage = willService.getWillListByEmail(email, title, pageable);
+        WillPageResponse willResponsePage = willService.getWillListByEmail(email, title, pageable);
         return ResponseEntity.ok()
                 .body(willResponsePage);
     }
 
-    @GetMapping("/wills/{id}")
+    @GetMapping("/will/{id}")
     public ResponseEntity<WillResponse> getWill(@PathVariable("id") Long willId,
                                                 HttpServletRequest request) {
         log.debug("getWill called...");
@@ -71,9 +71,29 @@ public class WillController {
                 .body(willResponse);
     }
 
-    @PutMapping("/wills")
-    public ResponseEntity putWill(@RequestBody WillRequest willRequest,
-                                  HttpServletRequest request) {
+    @PostMapping("/will")
+    public ResponseEntity postWill(@RequestBody WillRequest willRequest,
+                                   HttpServletRequest request) {
+        log.debug("postWill called...");
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+        log.debug("postWill -> email : {}", email);
+        willService.postWill(email, willRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/will/{id}")
+    public ResponseEntity putWill(@PathVariable("id") Long willId,
+                                  @RequestBody WillRequest willRequest,
+                                   HttpServletRequest request) {
         log.debug("putWill called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
@@ -86,11 +106,11 @@ public class WillController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
         log.debug("putWill -> email : {}", email);
-        willService.putWill(email, willRequest);
+        willService.putWill(email, willId, willRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/wills/{id}")
+    @DeleteMapping("/will/{id}")
     public ResponseEntity deleteWill(@PathVariable("id") Long willId,
                                      HttpServletRequest request) {
         log.debug("deleteWill called...");
