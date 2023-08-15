@@ -61,7 +61,7 @@ public class ChecklistController {
 
 
     @GetMapping("/checklist/{id}")
-    public ResponseEntity<ChecklistResponse> getChecklist(
+    public ResponseEntity<ChecklistDetailResponse> getChecklist(
             HttpServletRequest request,
             @PathVariable("id") Long userChecklistId) {
         log.debug("getChecklist called...");
@@ -78,10 +78,10 @@ public class ChecklistController {
 
         log.debug("getChecklist -> email : {}", email);
 
-        ChecklistResponse checklistResponse = checklistService.getChecklistByEmailAndUserChecklistId(email, userChecklistId);
+        ChecklistDetailResponse checklistDetailResponse = checklistService.getChecklistByEmailAndUserChecklistId(email, userChecklistId);
 
         return ResponseEntity.ok()
-                .body(checklistResponse);
+                .body(checklistDetailResponse);
     }
 
     @PostMapping("/checklist")

@@ -8,6 +8,7 @@ import com.mamoori.mamooriback.api.entity.UserChecklistAnswer;
 import com.mamoori.mamooriback.api.repository.ChecklistRepository;
 import com.mamoori.mamooriback.api.repository.UserChecklistAnswerRepository;
 import com.mamoori.mamooriback.api.repository.UserChecklistRepository;
+import com.mamoori.mamooriback.api.repository.UserChecklistRepository.ChecklistPrevAndNext;
 import com.mamoori.mamooriback.api.repository.UserRepository;
 import com.mamoori.mamooriback.api.service.ChecklistService;
 import com.mamoori.mamooriback.exception.BusinessException;
@@ -56,7 +57,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     }
 
     @Override
-    public ChecklistResponse getChecklistByEmailAndUserChecklistId(String email, Long userChecklistId) {
+    public ChecklistDetailResponse getChecklistByEmailAndUserChecklistId(String email, Long userChecklistId) {
         UserChecklist userChecklist = userChecklistRepository.findById(userChecklistId)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.INVALID_REQUEST, ErrorCode.INVALID_REQUEST.getMessage()
@@ -66,19 +67,26 @@ public class ChecklistServiceImpl implements ChecklistService {
             throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
         }
 
+        ChecklistPrevAndNext prevAndNext = userChecklistRepository.findPrevAndNextById(userChecklist.getUser().getUserId(), userChecklistId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.INVALID_REQUEST, ErrorCode.INVALID_REQUEST.getMessage()
+                ));
+
         Long totalTaskCount = userChecklistRepository.getTotalTaskCount(userChecklistId);
         Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(userChecklistId);
         Integer progress = roundRatioToFirstDigit(checkedTaskCount, totalTaskCount);
 
         List<ChecklistDto> checklist = userChecklistRepository.getChecklist(userChecklistId);
 
-        return ChecklistResponse.builder()
+        return ChecklistDetailResponse.builder()
                 .id(userChecklist.getUserChecklistId())
                 .totalTaskCount(totalTaskCount)
                 .checkedTaskCount(checkedTaskCount)
                 .progress(progress)
                 .createdAt(userChecklist.getCreateAt())
                 .checklist(checklist)
+                .prevId(prevAndNext.getPrevId())
+                .nextId(prevAndNext.getNextId())
                 .build();
     }
 
