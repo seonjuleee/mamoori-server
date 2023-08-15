@@ -40,28 +40,25 @@ public class WillServiceImpl implements WillService {
 
     @Override
     public void postWill(String email, WillRequest willRequest) {
-        if (willRequest.getWillId() == null) {
-            // create
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new BusinessException(
-                            ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
-            willRepository.save(willRequest.toEntity(user));
-        } else {
-            log.debug("willService.putWill -> willId : {}", willRequest.getWillId());
-            // update
-            Will will = willRepository.findByWillId(willRequest.getWillId())
-                    .orElseThrow(() -> new BusinessException(
-                            ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+        willRepository.save(willRequest.toEntity(user));
+    }
 
-            log.debug("willlService.putWill -> email : {}", email);
-            log.debug("willlService.putWill -> email : {}", will.getUser().getEmail());
-            if (!will.getUser().getEmail().equals(email)) {
-                throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
-            }
-            will.setTitle(willRequest.getTitle());
-            will.setContent(willRequest.getContent());
-            willRepository.save(will);
+    @Override
+    public void putWill(String email, Long id, WillRequest willRequest) {
+        log.debug("putWill -> willId : {}", id);
+        Will will = willRepository.findByWillId(id)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
+
+        if (!will.getUser().getEmail().equals(email)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
         }
+        will.setTitle(willRequest.getTitle());
+        will.setContent(willRequest.getContent());
+        willRepository.save(will);
     }
 
     @Override

@@ -90,6 +90,26 @@ public class WillController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/will/{id}")
+    public ResponseEntity putWill(@PathVariable("id") Long willId,
+                                  @RequestBody WillRequest willRequest,
+                                   HttpServletRequest request) {
+        log.debug("putWill called...");
+        String accessToken = jwtService.extractAccessToken(request)
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+
+        String email = jwtService.extractEmailByAccessToken(accessToken)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
+                ));
+        log.debug("putWill -> email : {}", email);
+        willService.putWill(email, willId, willRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/will/{id}")
     public ResponseEntity deleteWill(@PathVariable("id") Long willId,
                                      HttpServletRequest request) {
