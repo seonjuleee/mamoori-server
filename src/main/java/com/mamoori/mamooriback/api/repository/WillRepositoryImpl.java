@@ -1,15 +1,15 @@
 package com.mamoori.mamooriback.api.repository;
 
 import com.mamoori.mamooriback.api.dto.QWillResponse;
+import com.mamoori.mamooriback.api.dto.WillPageResponse;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.mamoori.mamooriback.api.entity.QUser.user;
@@ -23,7 +23,7 @@ public class WillRepositoryImpl implements WillRepositoryCustom {
     }
 
     @Override
-    public Page<WillResponse> search(String email, String title, Pageable pageable) {
+    public WillPageResponse search(String email, String title, Pageable pageable) {
         List<WillResponse> content = queryFactory
                 .select(new QWillResponse(will.willId,
                         will.title,
@@ -38,7 +38,24 @@ public class WillRepositoryImpl implements WillRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        return new PageImpl<>(content, pageable, getCount(email, title));
+
+        return WillPageResponse.builder()
+                .wills(content)
+                .totalWillCount(getCount(email, title))
+                .size(pageable.getPageSize())
+                .page(pageable.getPageNumber())
+                .latestWillDate(findLatestWillByEmail(email))
+                .build();
+    }
+
+    private LocalDateTime findLatestWillByEmail(String email) {
+        return queryFactory
+                .select(will.createAt)
+                .from(will)
+                .where(will.user.email.eq(email))
+                .orderBy(will.createAt.desc())
+                .limit(1)
+                .fetchOne();
     }
 
     private Long getCount(String email, String title) {
