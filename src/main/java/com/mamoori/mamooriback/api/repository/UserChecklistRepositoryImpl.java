@@ -1,8 +1,11 @@
 package com.mamoori.mamooriback.api.repository;
 
 import com.mamoori.mamooriback.api.dto.*;
+import com.mamoori.mamooriback.api.entity.UserChecklist;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
@@ -56,12 +59,9 @@ public class UserChecklistRepositoryImpl implements UserChecklistRepositoryCusto
     }
 
     @Override
-    public ChecklistPageResponse getChecklistPage(String email, Pageable pageable) {
-        List<ChecklistResponse> result = queryFactory
-                .select(new QChecklistResponse(
-                        userChecklist.userChecklistId,
-                        userChecklist.createAt
-                ))
+    public Page<UserChecklist> getChecklistPage(String email, Pageable pageable) {
+        List<UserChecklist> result = queryFactory
+                .select(userChecklist)
                 .from(userChecklist)
                 .where(userChecklist.user.email.eq(email))
                 .orderBy(userChecklist.createAt.desc())
@@ -69,13 +69,7 @@ public class UserChecklistRepositoryImpl implements UserChecklistRepositoryCusto
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new ChecklistPageResponse(
-                getCount(email),
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                result,
-                findLastChecklistAnswerByEmail(email)
-        );
+        return new PageImpl<>(result, pageable, getCount(email));
     }
 
     public Long getCount(String email) {

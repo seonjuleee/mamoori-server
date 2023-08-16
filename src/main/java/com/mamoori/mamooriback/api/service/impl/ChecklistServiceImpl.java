@@ -15,12 +15,14 @@ import com.mamoori.mamooriback.exception.BusinessException;
 import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,20 +42,35 @@ public class ChecklistServiceImpl implements ChecklistService {
 
     @Override
     public ChecklistPageResponse getChecklists(String email, Pageable pageable) {
-        ChecklistPageResponse checklistPage = userChecklistRepository.getChecklistPage(email, pageable);
-        for (ChecklistResponse checklist : checklistPage.getChecklists()) {
-            Long totalTaskCount = userChecklistRepository.getTotalTaskCount(checklist.getId());
-            Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(checklist.getId());
+        List<ChecklistResponse> checklists = new ArrayList<>();
+        Page<UserChecklist> checklistPage = userChecklistRepository.getChecklistPage(email, pageable);
+        checklistPage.getTotalPages();
+        for (UserChecklist userChecklist : checklistPage.getContent()) {
+            Long totalTaskCount = userChecklistRepository.getTotalTaskCount(userChecklist.getUserChecklistId());
+            Long checkedTaskCount = userChecklistRepository.getCheckedTaskCount(userChecklist.getUserChecklistId());
             Integer progress = roundRatioToFirstDigit(checkedTaskCount, totalTaskCount);
-            List<ChecklistDto> dto = userChecklistRepository.getChecklist(checklist.getId());
-            checklist.setTotalTaskCount(totalTaskCount);
-            checklist.setCheckedTaskCount(checkedTaskCount);
-            checklist.setProgress(progress);
-            checklist.setChecklist(dto);
+            List<ChecklistDto> dto = userChecklistRepository.getChecklist(userChecklist.getUserChecklistId());
+            checklists.add(
+                    ChecklistResponse.builder()
+                            .id(userChecklist.getUserChecklistId())
+                            .totalTaskCount(totalTaskCount)
+                            .checkedTaskCount(checkedTaskCount)
+                            .progress(progress)
+                            .checklist(dto)
+                            .createdAt(userChecklist.getCreateAt())
+                    .build()
+            );
         }
-
-        log.debug("checklists : {}", checklistPage);
-        return checklistPage;
+        return new ChecklistPageResponse(
+                checklistPage.getTotalElements(),
+                checklistPage.getNumber() + 1,
+                checklistPage.getSize(),
+                checklistPage.getTotalPages(),
+                checklistPage.isFirst(),
+                checklistPage.isLast(),
+                userChecklistRepository.findLastChecklistAnswerByEmail(email),
+                checklists
+        );
     }
 
     @Override
