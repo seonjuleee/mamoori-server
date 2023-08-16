@@ -20,6 +20,10 @@ spring:
   h2:
     console:
       enabled: true
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
 logging:
   level:
     org.hibernate.SQL: debug  # logger를 통해 Hibernate 실행 SQL 남기기
