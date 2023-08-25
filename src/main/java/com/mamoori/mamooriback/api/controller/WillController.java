@@ -71,28 +71,8 @@ public class WillController {
                 .body(willResponse);
     }
 
-    @PostMapping("/will")
-    public ResponseEntity postWill(@RequestBody WillRequest willRequest,
-                                   HttpServletRequest request) {
-        log.debug("postWill called...");
-        String accessToken = jwtService.extractAccessToken(request)
-                .filter(jwtService::isTokenValid)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
-                ));
-
-        String email = jwtService.extractEmailByAccessToken(accessToken)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
-                ));
-        log.debug("postWill -> email : {}", email);
-        willService.postWill(email, willRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping("/will/{id}")
-    public ResponseEntity putWill(@PathVariable("id") Long willId,
-                                  @RequestBody WillRequest willRequest,
+    @PutMapping("/will")
+    public ResponseEntity putWill(@RequestBody WillRequest willRequest,
                                    HttpServletRequest request) {
         log.debug("putWill called...");
         String accessToken = jwtService.extractAccessToken(request)
@@ -106,7 +86,7 @@ public class WillController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
         log.debug("putWill -> email : {}", email);
-        willService.putWill(email, willId, willRequest);
+        willService.putWill(email, willRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

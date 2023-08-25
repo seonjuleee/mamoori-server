@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -37,26 +39,29 @@ public class WillServiceImpl implements WillService {
     }
 
     @Override
-    public void postWill(String email, WillRequest willRequest) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
-        willRepository.save(willRequest.toEntity(user));
-    }
+    public void putWill(String email, WillRequest willRequest) {
+        Optional<Will> optionalWill = willRepository.findByUser_Email(email);
+        log.debug("putWill -> isPresent : {}", optionalWill.isPresent());
 
-    @Override
-    public void putWill(String email, Long id, WillRequest willRequest) {
-        log.debug("putWill -> willId : {}", id);
-        Will will = willRepository.findByWillId(id)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
-
-        if (!will.getUser().getEmail().equals(email)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+        if (!optionalWill.isPresent()) {
+            // create
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+            Will will = willRequest.toEntity(user);
+            will.setTitle(willRequest.getTitle());
+            will.setContent(willRequest.getContent());
+            willRepository.save(will);
+        } else {
+            // update
+            Will will = optionalWill.get();
+            if (!will.getUser().getEmail().equals(email)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+            }
+            will.setTitle(willRequest.getTitle());
+            will.setContent(willRequest.getContent());
+            willRepository.save(will);
         }
-        will.setTitle(willRequest.getTitle());
-        will.setContent(willRequest.getContent());
-        willRepository.save(will);
     }
 
     @Override
