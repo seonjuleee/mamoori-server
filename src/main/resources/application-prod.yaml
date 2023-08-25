@@ -11,6 +11,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      jdbc:
+        time_zone: Asia/Seoul
     properties:
       hibernate:
         #        show_sql: true  # System.out에 Hibernate 실행 SQL 남기기

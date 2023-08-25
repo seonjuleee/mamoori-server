@@ -1,6 +1,5 @@
 package com.mamoori.mamooriback.api.service.impl;
 
-import com.mamoori.mamooriback.api.dto.WillPageResponse;
 import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.entity.User;
@@ -12,8 +11,9 @@ import com.mamoori.mamooriback.exception.BusinessException;
 import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,44 +24,42 @@ public class WillServiceImpl implements WillService {
     private final UserRepository userRepository;
 
     @Override
-    public WillPageResponse getWillListByEmail(String email, String title, Pageable pageable) {
-        return willRepository.search(email, title, pageable);
-    }
-
-    @Override
-    public WillResponse getWillById(String email, Long id) {
-        Will will = willRepository.findByUser_EmailAndWillId(email, id)
+    public WillResponse getWillByEmail(String email) {
+        Will will = willRepository.findByUser_Email(email)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
         return new WillResponse(will);
     }
 
     @Override
-    public void postWill(String email, WillRequest willRequest) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
-        willRepository.save(willRequest.toEntity(user));
-    }
+    public void putWill(String email, WillRequest willRequest) {
+        Optional<Will> optionalWill = willRepository.findByUser_Email(email);
+        log.debug("putWill -> isPresent : {}", optionalWill.isPresent());
 
-    @Override
-    public void putWill(String email, Long id, WillRequest willRequest) {
-        log.debug("putWill -> willId : {}", id);
-        Will will = willRepository.findByWillId(id)
-                .orElseThrow(() -> new BusinessException(
-                        ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
-
-        if (!will.getUser().getEmail().equals(email)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+        if (!optionalWill.isPresent()) {
+            // create
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.USER_NOT_FOUND, ErrorCode.USER_NOT_FOUND.getMessage()));
+            Will will = willRequest.toEntity(user);
+            will.setTitle(willRequest.getTitle());
+            will.setContent(willRequest.getContent());
+            willRepository.save(will);
+        } else {
+            // update
+            Will will = optionalWill.get();
+            if (!will.getUser().getEmail().equals(email)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage());
+            }
+            will.setTitle(willRequest.getTitle());
+            will.setContent(willRequest.getContent());
+            willRepository.save(will);
         }
-        will.setTitle(willRequest.getTitle());
-        will.setContent(willRequest.getContent());
-        willRepository.save(will);
     }
 
     @Override
-    public void deleteWill(String email, Long willId) {
-        Will will = willRepository.findByWillId(willId)
+    public void deleteWill(String email) {
+        Will will = willRepository.findByUser_Email(email)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
         if (!will.getUser().getEmail().equals(email)) {
