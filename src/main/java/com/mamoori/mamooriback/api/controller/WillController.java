@@ -89,9 +89,8 @@ public class WillController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/will/{id}")
-    public ResponseEntity deleteWill(@PathVariable("id") Long willId,
-                                     HttpServletRequest request) {
+    @DeleteMapping("/will")
+    public ResponseEntity deleteWill(HttpServletRequest request) {
         log.debug("deleteWill called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
@@ -104,7 +103,7 @@ public class WillController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
         log.debug("deleteWill -> email : {}", email);
-        willService.deleteWill(email, willId);
+        willService.deleteWill(email);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -10,5 +10,5 @@ public interface WillService {
     WillPageResponse getWillListByEmail(String email, String title, Pageable pageable);
     WillResponse getWillByEmail(String email);
     void putWill(String email, WillRequest willRequest);
-    void deleteWill(String email, Long willId);
+    void deleteWill(String email);
 }
