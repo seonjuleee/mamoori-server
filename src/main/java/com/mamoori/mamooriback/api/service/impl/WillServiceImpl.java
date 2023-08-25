@@ -1,6 +1,5 @@
 package com.mamoori.mamooriback.api.service.impl;
 
-import com.mamoori.mamooriback.api.dto.WillPageResponse;
 import com.mamoori.mamooriback.api.dto.WillRequest;
 import com.mamoori.mamooriback.api.dto.WillResponse;
 import com.mamoori.mamooriback.api.entity.User;
@@ -12,7 +11,6 @@ import com.mamoori.mamooriback.exception.BusinessException;
 import com.mamoori.mamooriback.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,11 +22,6 @@ public class WillServiceImpl implements WillService {
 
     private final WillRepository willRepository;
     private final UserRepository userRepository;
-
-    @Override
-    public WillPageResponse getWillListByEmail(String email, String title, Pageable pageable) {
-        return willRepository.search(email, title, pageable);
-    }
 
     @Override
     public WillResponse getWillByEmail(String email) {
