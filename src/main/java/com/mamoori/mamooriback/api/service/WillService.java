@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface WillService {
     WillPageResponse getWillListByEmail(String email, String title, Pageable pageable);
-    WillResponse getWillById(String email, Long id);
+    WillResponse getWillByEmail(String email);
     void putWill(String email, WillRequest willRequest);
     void deleteWill(String email, Long willId);
 }

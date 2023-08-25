@@ -31,8 +31,8 @@ public class WillServiceImpl implements WillService {
     }
 
     @Override
-    public WillResponse getWillById(String email, Long id) {
-        Will will = willRepository.findByUser_EmailAndWillId(email, id)
+    public WillResponse getWillByEmail(String email) {
+        Will will = willRepository.findByUser_Email(email)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.FORBIDDEN, ErrorCode.FORBIDDEN.getMessage()));
         return new WillResponse(will);

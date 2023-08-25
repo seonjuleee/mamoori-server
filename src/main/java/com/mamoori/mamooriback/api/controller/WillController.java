@@ -50,9 +50,8 @@ public class WillController {
                 .body(willResponsePage);
     }
 
-    @GetMapping("/will/{id}")
-    public ResponseEntity<WillResponse> getWill(@PathVariable("id") Long willId,
-                                                HttpServletRequest request) {
+    @GetMapping("/will")
+    public ResponseEntity<WillResponse> getWill(HttpServletRequest request) {
         log.debug("getWill called...");
         String accessToken = jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
@@ -65,7 +64,7 @@ public class WillController {
                         ErrorCode.UNAUTHORIZED, ErrorCode.UNAUTHORIZED.getMessage()
                 ));
         log.debug("getWill -> email : {}", email);
-        WillResponse willResponse = willService.getWillById(email, willId);
+        WillResponse willResponse = willService.getWillByEmail(email);
 
         return ResponseEntity.ok()
                 .body(willResponse);
